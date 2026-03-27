@@ -1,0 +1,45 @@
+services:
+  web:
+    build: .
+    container_name: lynxloop_web
+    ports:
+      - "8080:80"
+    volumes:
+      - ./:/var/www/html
+    depends_on:
+      - db
+    environment:
+      DB_HOST: db
+      DB_NAME: lynxloop_db
+      DB_USER: lynxuser
+      DB_PASS: pa55word
+
+
+  db:
+    image: mysql:8.0
+    container_name: lynxloop_db
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: lynxloop_db
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: lynxuser
+      MYSQL_PASSWORD: pa55word
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: lynxloop_phpmyadmin
+    restart: unless-stopped
+    depends_on:
+      - db
+    ports:
+      - "8081:80"
+    environment:
+      PMA_HOST: db
+      PMA_PORT: 3306
+
+volumes:
+  mysql_data:
