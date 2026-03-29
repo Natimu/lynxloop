@@ -6,26 +6,10 @@ use App\Models\User;
 
 class AuthController extends Controller
 {
-    public function showLogin(): void
-    {
-        Auth::requireGuest();
-
-        $this->view('auth/login', [
-            'title' => 'Login',
-        ]);
-    }
-
-    public function showRegister(): void
-    {
-        Auth::requireGuest();
-
-        $this->view('auth/register', [
-            'title' => 'Register',
-        ]);
-    }
-
+    
     public function registerForm(): void
     {
+        Auth::requireGuest();
         if (isset($_SESSION['user_id'])) {
             
             $this->redirect('/register');
@@ -39,6 +23,7 @@ class AuthController extends Controller
 
     public function register(): void
     {
+        Auth::requireGuest();
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             $this->redirect('/register');
         }
@@ -137,6 +122,7 @@ class AuthController extends Controller
 
     public function loginForm(): void
     {
+        Auth::requireGuest();
         if (isset($_SESSION['user_id'])) {
             $this->redirect('');
         }
@@ -150,6 +136,8 @@ class AuthController extends Controller
     
 public function login(): void
 {
+    Auth::requireGuest();
+    
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         $this->redirect('login');
     }

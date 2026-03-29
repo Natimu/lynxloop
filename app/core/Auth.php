@@ -6,7 +6,7 @@ class Auth
 {
     public static function check(): bool
     {
-        return isset($_SESSION['user']);
+        return isset($_SESSION['user_id']);
     }
 
     public static function user(): ?array
