@@ -5,15 +5,18 @@ declare(strict_types=1);
 use App\Core\Auth;
 use App\Core\Controller;
 use App\Models\Listing;
+use App\Models\Tables;
 use Throwable;
 
 class ListingsController extends Controller
 {
     private Listing $listingModel;
+    private Tables $tablesModel;
 
     public function __construct()
     {
         $this->listingModel = new Listing();
+        $this->tablesModel = new Tables();
     }
 
     public function create(): void
@@ -24,7 +27,7 @@ class ListingsController extends Controller
             'title' => 'New Listing | Lynxloop',
             'isLoggedIn' => isset($_SESSION['user_id']),
             'firstName' => $_SESSION['user_first_name'] ?? null,
-            'categoryOptions' => $this->categoryOptions(),
+            'categoryOptions' => $this->tablesModel->categoryOptions(),
             'conditionOptions' => $this->conditionOptions(),
             'errors' => [],
             'old' => ['pickup_only' => 1, 'quantity' => 1],
@@ -75,7 +78,7 @@ class ListingsController extends Controller
             $errors['description'] = 'Describe what you are offering.';
         }
 
-        $categories = array_column($this->categoryOptions(), 'label', 'id');
+        $categories = array_column($this->tablesModel->categoryOptions(), 'name', 'id');
         if ($categoryId <= 0 || !array_key_exists($categoryId, $categories)) {
             $errors['category_id'] = 'Select a category.';
         }
@@ -111,7 +114,7 @@ class ListingsController extends Controller
                 'title' => 'New Listing | Lynxloop',
                 'isLoggedIn' => true,
                 'firstName' => $_SESSION['user_first_name'] ?? null,
-                'categoryOptions' => $this->categoryOptions(),
+                'categoryOptions' => $this->tablesModel->categoryOptions(),
                 'conditionOptions' => $this->conditionOptions(),
                 'errors' => $errors,
                 'old' => $old,
@@ -142,7 +145,7 @@ class ListingsController extends Controller
                 'title' => 'New Listing | Lynxloop',
                 'isLoggedIn' => true,
                 'firstName' => $_SESSION['user_first_name'] ?? null,
-                'categoryOptions' => $this->categoryOptions(),
+                'categoryOptions' => $this->tablesModel->categoryOptions(),
                 'conditionOptions' => $this->conditionOptions(),
                 'errors' => $errors,
                 'old' => $old,

@@ -46,7 +46,7 @@ $checked = static function (string $key) use ($old): string {
                         $selected = (int) ($old['category_id'] ?? 0) === (int) $option['id'] ? 'selected' : '';
                     ?>
                         <option value="<?= htmlspecialchars((string) $option['id'], ENT_QUOTES, 'UTF-8') ?>" <?= $selected ?>>
-                            <?= htmlspecialchars($option['label'], ENT_QUOTES, 'UTF-8') ?>
+                            <?= htmlspecialchars($option['name'], ENT_QUOTES, 'UTF-8') ?>
                         </option>
                     <?php endforeach; ?>
                 </select>

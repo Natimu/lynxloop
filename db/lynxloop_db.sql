@@ -283,13 +283,6 @@ CREATE TABLE `users` (
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `users`
---
-
-INSERT INTO `users` (`id`, `first_name`, `last_name`, `email`, `password_hash`, `university_role`, `verification_status`, `profile_image`, `bio`, `phone`, `average_rating`, `total_reviews`, `account_status`, `last_login`, `created_at`, `updated_at`) VALUES
-(1, 'nati', 'awoke', 'tial2@gmail.com', '$2y$10$E.VfBjG.5qne26hu3qmmYuuG3ytpoH2GnvMIxk3DODzeyd/FUijuK', 'student', 'pending', NULL, NULL, NULL, 0.00, 0, 'active', NULL, '2026-03-24 18:11:01', '2026-03-24 18:11:01');
-
 -- --------------------------------------------------------
 
 --

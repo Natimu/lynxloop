@@ -106,6 +106,7 @@ a {
     justify-content: flex-end;
     pointer-events: none;
     z-index: 15;
+    visibility: hidden;
 }
 
 .account-panel {
@@ -181,6 +182,7 @@ a {
 
 .account-panel-open .account-panel-wrap {
     pointer-events: auto;
+    visibility: visible;
 }
 
 .account-panel-open .account-panel {
