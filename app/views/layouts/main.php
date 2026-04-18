@@ -128,5 +128,6 @@ if (isset($_SESSION['flash_error'])) {
             });
         })();
     </script>
+    <script src="/js/image-upload.js"></script>
 </body>
 </html>

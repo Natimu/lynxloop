@@ -28,7 +28,7 @@ $checked = static function (string $key) use ($old): string {
         </div>
     <?php endif; ?>
 
-    <form action="/listings" method="POST" novalidate>
+    <form action="/listings" method="POST" enctype="multipart/form-data" novalidate>
         <div class="form-grid">
             <div class="form-field">
                 <label for="title">Listing title</label>
@@ -101,6 +101,31 @@ $checked = static function (string $key) use ($old): string {
                 <input class="input-control" type="text" id="location" name="location" value="<?= $value('location') ?>">
                 <?php if (!empty($errors['location'])): ?>
                     <span class="field-error"><?= htmlspecialchars($errors['location'], ENT_QUOTES, 'UTF-8') ?></span>
+                <?php endif; ?>
+            </div>
+
+            <div class="form-field">
+                <label for="images">Upload Images</label>
+                <div id="drop-zone" class="drop-zone">
+                    Drag &amp; drop images here or click to select
+                </div>
+                <input
+                    class="input-control"
+                    type="file"
+                    id="images"
+                    name="images[]"
+                    accept="image/jpeg, image/png, image/webp"
+                    multiple
+                    required
+                    hidden
+                >
+                <small>You must upload at least 1 image and up to 6 images.</small>
+                <div id="image-preview-container" class="image-preview-container"></div>
+
+                <?php if (!empty($errors['images'])): ?>
+                    <span class="field-error">
+                        <?= htmlspecialchars($errors['images'], ENT_QUOTES, 'UTF-8') ?>
+                    </span>
                 <?php endif; ?>
             </div>
         </div>

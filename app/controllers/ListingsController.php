@@ -6,10 +6,17 @@ use App\Core\Auth;
 use App\Core\Controller;
 use App\Models\Listing;
 use App\Models\Tables;
-use Throwable;
 
 class ListingsController extends Controller
 {
+    private const MAX_IMAGE_COUNT = 6;
+    private const MAX_IMAGE_SIZE_BYTES = 5242880;
+    private const ALLOWED_IMAGE_MIME_TYPES = [
+        'image/jpeg' => 'jpg',
+        'image/png' => 'png',
+        'image/webp' => 'webp',
+    ];
+
     private Listing $listingModel;
     private Tables $tablesModel;
 
@@ -67,6 +74,7 @@ class ListingsController extends Controller
         ];
 
         $errors = [];
+        $uploadedImages = $this->normalizeUploadedFiles($_FILES['images'] ?? null);
 
         if ($title === '') {
             $errors['title'] = 'Give your listing a name.';
@@ -109,6 +117,11 @@ class ListingsController extends Controller
             $errors['location'] = 'Location is too long.';
         }
 
+        $imageError = $this->validateImages($uploadedImages);
+        if ($imageError !== null) {
+            $errors['images'] = $imageError;
+        }
+
         if (!empty($errors)) {
             $this->view('listings/create', [
                 'title' => 'New Listing | Lynxloop',
@@ -122,8 +135,12 @@ class ListingsController extends Controller
             return;
         }
 
+        $storedImagePaths = [];
+
         try {
-            $this->listingModel->createListing([
+            $storedImagePaths = $this->storeUploadedImages($uploadedImages);
+
+            $this->listingModel->createListingWithImages([
                 'user_id' => (int) $_SESSION['user_id'],
                 'category_id' => $categoryId,
                 'title' => $title,
@@ -136,8 +153,9 @@ class ListingsController extends Controller
                 'location' => $location !== '' ? $location : null,
                 'status' => 'pending',
                 'pickup_only' => $pickupOnly,
-            ]);
+            ], $storedImagePaths);
         } catch (Throwable $exception) {
+            $this->deleteStoredImages($storedImagePaths);
             error_log('Listing creation failed: ' . $exception->getMessage());
             $errors['general'] = 'Something went wrong while saving your listing.';
 
@@ -179,5 +197,133 @@ class ListingsController extends Controller
             'fair' => 'Fair',
             'poor' => 'Well Loved',
         ];
+    }
+
+    private function normalizeUploadedFiles(mixed $images): array
+    {
+        if (!is_array($images) || !isset($images['name']) || !is_array($images['name'])) {
+            return [];
+        }
+
+        $files = [];
+
+        foreach ($images['name'] as $index => $name) {
+            $tmpName = $images['tmp_name'][$index] ?? '';
+            if ($name === '' && $tmpName === '') {
+                continue;
+            }
+
+            $files[] = [
+                'name' => (string) $name,
+                'type' => (string) ($images['type'][$index] ?? ''),
+                'tmp_name' => (string) $tmpName,
+                'error' => (int) ($images['error'][$index] ?? UPLOAD_ERR_NO_FILE),
+                'size' => (int) ($images['size'][$index] ?? 0),
+            ];
+        }
+
+        return $files;
+    }
+
+    private function validateImages(array $images): ?string
+    {
+        if ($images === []) {
+            return 'Upload at least 1 image.';
+        }
+
+        if (count($images) > self::MAX_IMAGE_COUNT) {
+            return 'Upload no more than 6 images.';
+        }
+
+        foreach ($images as $image) {
+            if (($image['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_OK) {
+                return 'One or more images failed to upload.';
+            }
+
+            if (($image['size'] ?? 0) <= 0) {
+                return 'Uploaded images must not be empty.';
+            }
+
+            if (($image['size'] ?? 0) > self::MAX_IMAGE_SIZE_BYTES) {
+                return 'Each image must be 5 MB or smaller.';
+            }
+
+            $mimeType = $this->detectMimeType((string) ($image['tmp_name'] ?? ''));
+            if ($mimeType === null || !array_key_exists($mimeType, self::ALLOWED_IMAGE_MIME_TYPES)) {
+                return 'Only JPG, PNG, and WEBP images are allowed.';
+            }
+        }
+
+        return null;
+    }
+
+    private function storeUploadedImages(array $images): array
+    {
+        $uploadDirectory = $this->uploadDirectory();
+        if (!is_dir($uploadDirectory) && !mkdir($uploadDirectory, 0775, true) && !is_dir($uploadDirectory)) {
+            throw new RuntimeException('Unable to create listing upload directory.');
+        }
+
+        $storedImagePaths = [];
+
+        try {
+            foreach ($images as $image) {
+                $mimeType = $this->detectMimeType((string) $image['tmp_name']);
+                if ($mimeType === null) {
+                    throw new RuntimeException('Unable to determine uploaded image type.');
+                }
+
+                $extension = self::ALLOWED_IMAGE_MIME_TYPES[$mimeType] ?? null;
+                if ($extension === null) {
+                    throw new RuntimeException('Unsupported image type uploaded.');
+                }
+
+                $fileName = bin2hex(random_bytes(16)) . '.' . $extension;
+                $destination = $uploadDirectory . DIRECTORY_SEPARATOR . $fileName;
+
+                if (!move_uploaded_file((string) $image['tmp_name'], $destination)) {
+                    throw new RuntimeException('Failed to move uploaded image.');
+                }
+
+                $storedImagePaths[] = '/uploads/listings/' . $fileName;
+            }
+        } catch (Throwable $exception) {
+            $this->deleteStoredImages($storedImagePaths);
+            throw $exception;
+        }
+
+        return $storedImagePaths;
+    }
+
+    private function deleteStoredImages(array $storedImagePaths): void
+    {
+        foreach ($storedImagePaths as $storedImagePath) {
+            $absolutePath = dirname(__DIR__, 2) . '/public' . $storedImagePath;
+            if (is_file($absolutePath)) {
+                unlink($absolutePath);
+            }
+        }
+    }
+
+    private function uploadDirectory(): string
+    {
+        return dirname(__DIR__, 2) . '/public/uploads/listings';
+    }
+
+    private function detectMimeType(string $tmpFile): ?string
+    {
+        if ($tmpFile === '' || !is_file($tmpFile)) {
+            return null;
+        }
+
+        $finfo = finfo_open(FILEINFO_MIME_TYPE);
+        if ($finfo === false) {
+            return null;
+        }
+
+        $mimeType = finfo_file($finfo, $tmpFile) ?: null;
+        finfo_close($finfo);
+
+        return is_string($mimeType) ? $mimeType : null;
     }
 }
