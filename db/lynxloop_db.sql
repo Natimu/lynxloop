@@ -114,7 +114,8 @@ CREATE TABLE `listings` (
   `is_featured` tinyint(1) NOT NULL DEFAULT 0,
   `pickup_only` tinyint(1) NOT NULL DEFAULT 1,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `last_bumped_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -204,6 +205,36 @@ CREATE TABLE `password_resets` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `price_history`
+--
+
+CREATE TABLE `price_history` (
+  `id` int(11) NOT NULL,
+  `listing_id` int(11) NOT NULL,
+  `old_price` decimal(10,2) DEFAULT NULL,
+  `new_price` decimal(10,2) DEFAULT NULL,
+  `changed_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `saved_searches`
+--
+
+CREATE TABLE `saved_searches` (
+  `id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `query` varchar(200) NOT NULL,
+  `category_id` int(11) DEFAULT NULL,
+  `last_notified_at` timestamp NULL DEFAULT NULL,
+  `is_active` tinyint(1) NOT NULL DEFAULT 1,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `reports`
 --
 
@@ -277,6 +308,7 @@ CREATE TABLE `users` (
   `phone` varchar(25) DEFAULT NULL,
   `average_rating` decimal(3,2) DEFAULT 0.00,
   `total_reviews` int(11) NOT NULL DEFAULT 0,
+  `avg_response_minutes` int(11) DEFAULT NULL,
   `account_status` enum('active','suspended','banned','inactive') NOT NULL DEFAULT 'active',
   `last_login` datetime DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
@@ -355,7 +387,8 @@ ALTER TABLE `listings`
   ADD KEY `idx_listings_status` (`status`),
   ADD KEY `idx_listings_price` (`price`),
   ADD KEY `idx_listings_created_at` (`created_at`),
-  ADD KEY `idx_listings_trade_allowed` (`is_trade_allowed`);
+  ADD KEY `idx_listings_trade_allowed` (`is_trade_allowed`),
+  ADD KEY `idx_listings_last_bumped_at` (`last_bumped_at`);
 
 --
 -- Indexes for table `listing_images`
@@ -400,6 +433,22 @@ ALTER TABLE `password_resets`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `reset_token` (`reset_token`),
   ADD KEY `fk_password_resets_user` (`user_id`);
+
+--
+-- Indexes for table `price_history`
+--
+ALTER TABLE `price_history`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_price_history_listing_id` (`listing_id`),
+  ADD KEY `idx_price_history_changed_at` (`changed_at`);
+
+--
+-- Indexes for table `saved_searches`
+--
+ALTER TABLE `saved_searches`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_saved_searches_user_id` (`user_id`),
+  ADD KEY `idx_saved_searches_active` (`is_active`);
 
 --
 -- Indexes for table `reports`
@@ -524,6 +573,18 @@ ALTER TABLE `password_resets`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT for table `price_history`
+--
+ALTER TABLE `price_history`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `saved_searches`
+--
+ALTER TABLE `saved_searches`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `reports`
 --
 ALTER TABLE `reports`
@@ -629,6 +690,19 @@ ALTER TABLE `orders`
 --
 ALTER TABLE `password_resets`
   ADD CONSTRAINT `fk_password_resets_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `price_history`
+--
+ALTER TABLE `price_history`
+  ADD CONSTRAINT `fk_price_history_listing` FOREIGN KEY (`listing_id`) REFERENCES `listings` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `saved_searches`
+--
+ALTER TABLE `saved_searches`
+  ADD CONSTRAINT `fk_saved_searches_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `fk_saved_searches_category` FOREIGN KEY (`category_id`) REFERENCES `categories` (`id`) ON DELETE SET NULL;
 
 --
 -- Constraints for table `reports`
