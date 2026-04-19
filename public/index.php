@@ -13,6 +13,10 @@ require_once __DIR__ . '/../app/core/Router.php';
 require_once __DIR__ . '/../app/models/User.php';
 require_once __DIR__ . '/../app/models/Listing.php';
 require_once __DIR__ . '/../app/models/Tables.php';
+require_once __DIR__ . '/../app/models/Favorite.php';
+require_once __DIR__ . '/../app/models/Message.php';
+require_once __DIR__ . '/../app/models/PriceHistory.php';
+require_once __DIR__ . '/../app/models/SavedSearch.php';
 require_once __DIR__ . '/../app/controllers/HomeController.php';
 require_once __DIR__ . '/../app/controllers/AuthController.php';
 require_once __DIR__ . '/../app/controllers/DashboardController.php';
@@ -37,6 +41,25 @@ $router->get('dashboard', 'DashboardController@dashboard');
 
 $router->get('listings/create', 'ListingsController@create');
 $router->post('listings', 'ListingsController@store');
+
+// Listing detail
+$router->get('listings/show', 'ListingsController@show');
+
+// Search
+$router->get('listings/search', 'ListingsController@search');
+
+// Bump
+$router->post('listings/bump', 'ListingsController@bump');
+
+// Favorite toggle (AJAX)
+$router->post('listings/toggle-favorite', 'ListingsController@toggleFavorite');
+
+// Quick message / "Still available?"
+$router->post('listings/quick-message', 'ListingsController@quickMessage');
+
+// Saved searches
+$router->post('listings/save-search', 'ListingsController@saveSearch');
+$router->post('listings/delete-saved-search', 'ListingsController@deleteSavedSearch');
 
 $router->post('logout', 'AuthController@logout');
 
