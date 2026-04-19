@@ -658,3 +658,613 @@ footer {
     transform: translateY(-1px);
     box-shadow: 0 18px 34px rgba(243, 200, 70, 0.12);
 }
+
+/* ============================================================
+   HEADER SEARCH BAR
+   ============================================================ */
+
+.header-search {
+    flex: 1;
+    max-width: 360px;
+    margin: 0 1rem;
+}
+
+.header-search-input {
+    width: 100%;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(14, 14, 14, 0.85);
+    color: var(--porcelain);
+    padding: 0.5rem 1rem;
+    font: inherit;
+    font-size: 0.9rem;
+    transition: border-color 180ms ease, box-shadow 180ms ease;
+}
+
+.header-search-input:focus {
+    outline: none;
+    border-color: var(--gold);
+    box-shadow: 0 0 0 3px var(--gold-soft);
+}
+
+.header-search-input::placeholder {
+    color: var(--porcelain-muted);
+}
+
+/* ============================================================
+   PRICE DISPLAY ON CARDS
+   ============================================================ */
+
+.card-price-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.4rem;
+}
+
+.card-price {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--gold);
+}
+
+.card-price-trade {
+    color: var(--porcelain-muted);
+    font-style: italic;
+    font-size: 1rem;
+}
+
+.card-title-link {
+    text-decoration: none;
+    color: inherit;
+}
+
+.card-title-link:hover h3 {
+    color: var(--gold);
+}
+
+.card-view-btn {
+    flex: 1;
+    border-radius: 999px;
+    border: 1px solid transparent;
+    padding: 0.65rem 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    text-align: center;
+    transition: transform 160ms ease, box-shadow 160ms ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(120deg, var(--gold), var(--gold-deep));
+    color: var(--onyx);
+    box-shadow: 0 15px 30px rgba(243, 200, 70, 0.35);
+}
+
+.card-view-btn:hover {
+    transform: translateY(-2px);
+}
+
+/* ============================================================
+   PRICE DROP BADGE
+   ============================================================ */
+
+.price-drop-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    background: rgba(52, 211, 153, 0.12);
+    border: 1px solid rgba(52, 211, 153, 0.3);
+    color: #6ee7b7;
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.2rem 0.6rem;
+    border-radius: 999px;
+    letter-spacing: 0.02em;
+}
+
+.price-drop-badge s {
+    color: rgba(110, 231, 183, 0.5);
+    text-decoration: line-through;
+}
+
+/* ============================================================
+   TRADE BADGE
+   ============================================================ */
+
+.trade-badge,
+.trade-badge-sm {
+    background: var(--gold-soft);
+    color: var(--gold);
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.2rem 0.55rem;
+    border-radius: 999px;
+}
+
+/* ============================================================
+   BUMPED BADGE
+   ============================================================ */
+
+.bumped-badge {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+    background: var(--gold-soft);
+    color: var(--gold);
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 0.2rem 0.55rem;
+    border-radius: 999px;
+    letter-spacing: 0.05em;
+    z-index: 2;
+}
+
+/* ============================================================
+   SELLER RESPONSE TIME BADGE
+   ============================================================ */
+
+.response-time-badge {
+    display: inline-block;
+    background: rgba(99, 102, 241, 0.12);
+    border: 1px solid rgba(99, 102, 241, 0.25);
+    color: #a5b4fc;
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 0.15rem 0.5rem;
+    border-radius: 999px;
+    margin-top: 0.15rem;
+}
+
+/* ============================================================
+   SELLER AVATAR PLACEHOLDER (when no image)
+   ============================================================ */
+
+.seller-avatar-placeholder {
+    width: 48px;
+    height: 48px;
+    min-width: 48px;
+    border-radius: 50%;
+    border: 2px solid rgba(243, 200, 70, 0.65);
+    background: linear-gradient(135deg, var(--gold), var(--gold-deep));
+    color: var(--jet);
+    font-weight: 700;
+    font-size: 1.1rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* ============================================================
+   LISTING DETAIL PAGE
+   ============================================================ */
+
+.listing-detail {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+.detail-gallery {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.gallery-main {
+    border-radius: 24px;
+    overflow: hidden;
+    border: 1px solid var(--stroke);
+    background: var(--graphite);
+}
+
+.gallery-main img {
+    width: 100%;
+    height: 400px;
+    object-fit: cover;
+    display: block;
+}
+
+.gallery-empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 300px;
+    color: var(--porcelain-muted);
+}
+
+.gallery-thumbs {
+    display: flex;
+    gap: 0.5rem;
+    overflow-x: auto;
+}
+
+.gallery-thumb {
+    width: 72px;
+    height: 56px;
+    border-radius: 12px;
+    border: 2px solid transparent;
+    overflow: hidden;
+    cursor: pointer;
+    background: none;
+    padding: 0;
+    flex-shrink: 0;
+    transition: border-color 180ms ease;
+}
+
+.gallery-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.gallery-thumb.is-active,
+.gallery-thumb:hover {
+    border-color: var(--gold);
+}
+
+.detail-info {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.detail-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+}
+
+.detail-header h1 {
+    margin: 0;
+    font-size: clamp(1.4rem, 3vw, 2rem);
+}
+
+.detail-meta-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.35rem;
+}
+
+.detail-category,
+.detail-condition,
+.detail-views {
+    font-size: 0.8rem;
+    color: var(--porcelain-muted);
+    background: rgba(255, 255, 255, 0.04);
+    padding: 0.2rem 0.6rem;
+    border-radius: 999px;
+    border: 1px solid var(--stroke);
+}
+
+.detail-price-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.detail-price {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--gold);
+}
+
+.detail-price-trade {
+    color: var(--porcelain-muted);
+    font-style: italic;
+}
+
+.detail-description p {
+    margin: 0;
+    color: var(--porcelain-muted);
+    line-height: 1.7;
+}
+
+.detail-specs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.spec-item {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--stroke);
+    border-radius: 14px;
+    padding: 0.5rem 0.85rem;
+    font-size: 0.85rem;
+    color: var(--porcelain-muted);
+}
+
+.spec-item strong {
+    color: var(--porcelain);
+    margin-right: 0.3rem;
+}
+
+/* ============================================================
+   SELLER CARD ON DETAIL PAGE
+   ============================================================ */
+
+.detail-seller-card {
+    background: rgba(17, 17, 17, 0.9);
+    border: 1px solid var(--stroke);
+    border-radius: 20px;
+    padding: 1rem;
+}
+
+.detail-seller-card .seller-chip {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.seller-rating-badge {
+    display: inline-block;
+    color: var(--gold);
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin-top: 0.15rem;
+}
+
+/* ============================================================
+   FAVORITE BUTTON
+   ============================================================ */
+
+.favorite-btn {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--stroke);
+    border-radius: 50%;
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 1.3rem;
+    color: var(--porcelain-muted);
+    transition: color 200ms ease, border-color 200ms ease, transform 200ms ease;
+}
+
+.favorite-btn:hover {
+    border-color: var(--gold);
+    color: var(--gold);
+    transform: scale(1.1);
+}
+
+.favorite-btn.is-favorited {
+    color: var(--gold);
+    border-color: var(--gold);
+}
+
+/* ============================================================
+   DETAIL ACTION BUTTONS
+   ============================================================ */
+
+.detail-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.inline-form {
+    display: inline;
+}
+
+.detail-actions .solid {
+    border: none;
+    border-radius: 999px;
+    background: linear-gradient(120deg, var(--gold), var(--gold-deep));
+    color: var(--onyx);
+    font-weight: 600;
+    padding: 0.85rem 2rem;
+    cursor: pointer;
+    box-shadow: 0 20px 35px rgba(243, 200, 70, 0.35);
+    width: 100%;
+    font: inherit;
+    transition: transform 160ms ease;
+}
+
+.detail-actions .solid:hover {
+    transform: translateY(-2px);
+}
+
+.detail-actions .ghost,
+.bump-btn {
+    background: transparent;
+    border: 1px solid var(--stroke);
+    border-radius: 999px;
+    color: var(--porcelain);
+    font-weight: 600;
+    padding: 0.75rem 1.5rem;
+    cursor: pointer;
+    width: 100%;
+    font: inherit;
+    transition: border-color 180ms ease, color 180ms ease;
+}
+
+.detail-actions .ghost:hover,
+.bump-btn:hover {
+    border-color: var(--gold);
+    color: var(--gold);
+}
+
+.bump-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.quick-msg-input {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.quick-msg-input .input-control {
+    flex: 1;
+    border-radius: 999px;
+}
+
+.quick-msg-input .ghost {
+    width: auto;
+    padding: 0.65rem 1.25rem;
+}
+
+/* ============================================================
+   CAMPUS MEETUP MAP
+   ============================================================ */
+
+.meetup-map-section {
+    background: rgba(17, 17, 17, 0.9);
+    border: 1px solid var(--stroke);
+    border-radius: 20px;
+    padding: 1.25rem;
+}
+
+.meetup-map-section h3 {
+    margin: 0 0 0.25rem;
+    font-size: 1rem;
+}
+
+.meetup-spots {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    margin-top: 0.75rem;
+}
+
+.meetup-spot {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.65rem 0.85rem;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--stroke);
+    border-radius: 14px;
+}
+
+.spot-icon {
+    font-size: 1.3rem;
+    min-width: 28px;
+    text-align: center;
+}
+
+.meetup-spot strong {
+    display: block;
+    font-size: 0.85rem;
+}
+
+.meetup-spot span {
+    font-size: 0.75rem;
+    color: var(--porcelain-muted);
+}
+
+/* ============================================================
+   SIMILAR LISTINGS
+   ============================================================ */
+
+.similar-section {
+    margin-top: 2.5rem;
+    max-width: 1100px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* ============================================================
+   SEARCH PAGE
+   ============================================================ */
+
+.search-form {
+    margin-top: 1.5rem;
+}
+
+.search-bar {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.search-input {
+    flex: 2;
+    min-width: 200px;
+    border-radius: 999px !important;
+}
+
+.search-category {
+    flex: 1;
+    min-width: 160px;
+    border-radius: 999px !important;
+}
+
+.search-submit {
+    border: none;
+    border-radius: 999px;
+    background: linear-gradient(120deg, var(--gold), var(--gold-deep));
+    color: var(--onyx);
+    font-weight: 600;
+    padding: 0.65rem 1.75rem;
+    cursor: pointer;
+    font: inherit;
+    box-shadow: 0 15px 30px rgba(243, 200, 70, 0.35);
+    transition: transform 160ms ease;
+}
+
+.search-submit:hover {
+    transform: translateY(-2px);
+}
+
+.save-search-form {
+    margin-top: 1rem;
+}
+
+.save-search-btn {
+    background: rgba(99, 102, 241, 0.1);
+    border: 1px solid rgba(99, 102, 241, 0.25);
+    color: #a5b4fc;
+    border-radius: 999px;
+    padding: 0.6rem 1.25rem;
+    font: inherit;
+    font-size: 0.85rem;
+    cursor: pointer;
+    width: 100%;
+    transition: background 180ms ease, border-color 180ms ease;
+}
+
+.save-search-btn:hover {
+    background: rgba(99, 102, 241, 0.18);
+    border-color: rgba(99, 102, 241, 0.4);
+}
+
+/* ============================================================
+   RESPONSIVE — LISTING DETAIL
+   ============================================================ */
+
+@media (max-width: 768px) {
+    .listing-detail {
+        grid-template-columns: 1fr;
+    }
+
+    .gallery-main img {
+        height: 260px;
+    }
+
+    .header-search {
+        display: none;
+    }
+}
+
+@media (max-width: 640px) {
+    .search-bar {
+        flex-direction: column;
+    }
+
+    .detail-actions .solid,
+    .detail-actions .ghost {
+        font-size: 0.9rem;
+    }
+}
