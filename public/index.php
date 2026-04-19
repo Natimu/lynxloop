@@ -21,6 +21,7 @@ require_once __DIR__ . '/../app/controllers/HomeController.php';
 require_once __DIR__ . '/../app/controllers/AuthController.php';
 require_once __DIR__ . '/../app/controllers/DashboardController.php';
 require_once __DIR__ . '/../app/controllers/ListingsController.php';
+require_once __DIR__ . '/../app/controllers/MessagesController.php';
 require_once __DIR__ . '/../app/core/Auth.php';
 
 if (session_status() !== PHP_SESSION_ACTIVE){
@@ -60,6 +61,11 @@ $router->post('listings/quick-message', 'ListingsController@quickMessage');
 // Saved searches
 $router->post('listings/save-search', 'ListingsController@saveSearch');
 $router->post('listings/delete-saved-search', 'ListingsController@deleteSavedSearch');
+
+// Messages
+$router->get('messages', 'MessagesController@inbox');
+$router->get('messages/show', 'MessagesController@show');
+$router->post('messages/reply', 'MessagesController@reply');
 
 $router->post('logout', 'AuthController@logout');
 
