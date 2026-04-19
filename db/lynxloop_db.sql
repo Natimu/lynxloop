@@ -737,6 +737,196 @@ ALTER TABLE `trade_requests`
 --
 ALTER TABLE `user_sessions`
   ADD CONSTRAINT `fk_user_sessions_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+
+-- ============================================================
+-- SEED DATA (Demo / Development)
+-- ============================================================
+
+--
+-- Categories
+--
+
+INSERT INTO categories (id, name, slug, description, is_active) VALUES
+(1, 'Textbooks & Courseware', 'textbooks', 'Academic textbooks, workbooks, and study materials', 1),
+(2, 'Electronics & Gear', 'electronics', 'Laptops, monitors, headphones, and tech accessories', 1),
+(3, 'Apparel & Accessories', 'apparel', 'Clothing, bags, shoes, and fashion items', 1),
+(4, 'Furniture & Decor', 'furniture', 'Desks, chairs, lamps, and dorm essentials', 1),
+(5, 'Art & Studio Supplies', 'art-supplies', 'Paints, brushes, canvases, and creative tools', 1),
+(6, 'Experiences & Misc', 'experiences', 'Event tickets, tutoring, services, and everything else', 1),
+(7, 'Other', 'other', 'Anything that does not fit the categories above', 1);
+
+--
+-- Users (password for ALL users is: password)
+--
+
+INSERT INTO users (id, first_name, last_name, email, password_hash, university_role, verification_status, account_status, bio, avg_response_minutes) VALUES
+(1, 'Jordan', 'Mitchell', 'jordan@campus.edu',   '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'student',  'verified', 'active', 'CS major, coffee enthusiast, always looking for good deals on tech.', NULL),
+(2, 'Alana',  'Reid',     'alana@campus.edu',    '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'student',  'verified', 'active', 'Biochem senior selling off textbooks before graduation.', 15),
+(3, 'Mateo',  'Vega',     'mateo@campus.edu',    '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'student',  'verified', 'active', 'Audio nerd. Building speakers in my dorm since freshman year.', 45),
+(4, 'Kai',    'Okafor',   'kai@campus.edu',      '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'student',  'verified', 'active', 'Fashion cohort rep. Upcycling is my thing.', 120),
+(5, 'Serena', 'Holt',     'serena@campus.edu',   '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'alumni',   'verified', 'active', 'Graduated last spring, clearing out my apartment.', 30),
+(6, 'Noah',   'Bennett',  'noah@campus.edu',     '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'student',  'verified', 'active', 'Econ tutor. Selling notes and supplies.', NULL),
+(7, 'Priya',  'Raman',    'priya@campus.edu',    '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'student',  'verified', 'active', 'Robotics club president. Building drones on weekends.', 60),
+(8, 'Ivy',    'Chen',     'ivy@campus.edu',      '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'faculty',  'verified', 'active', 'Fine arts adjunct. Studio B is my second home.', 180);
+
+--
+-- Listings
+--
+
+INSERT INTO listings (id, user_id, category_id, title, description, item_condition, price, is_trade_allowed, quantity, brand, location, status, pickup_only, last_bumped_at) VALUES
+(1,  2, 1, 'Organic Chemistry Essentials Bundle',       'Three gently used textbooks with fresh margin notes and laminated quick-reference sheets. Covers OChem I and II.', 'good',     65.00, 1, 1, 'Pearson',     'Library West',       'active', 1, NOW()),
+(2,  5, 1, 'Data Structures in Practice',               'CS205 workbook with flashcards and color-coded tabs. All practice problems completed in pencil, easy to erase.', 'like_new', 40.00, 0, 1, 'O\'Reilly',   'CS Building Lobby',  'active', 1, NULL),
+(3,  6, 1, 'Microeconomics Lab Notes',                  'Printed slides annotated with exam tips from the Fall cohort. Includes bonus formula sheet.', 'good',     25.00, 1, 1, NULL,          'Student Union',      'active', 0, NULL),
+(4,  8, 1, 'Studio Art Sketch Pads (3-pack)',            'Acid-free pads 18x24 with bonus charcoal set. Opened but never used — wrong size for my class.', 'new',      30.00, 0, 3, 'Strathmore',  'Art Building',       'active', 1, NULL),
+(5,  2, 1, 'Intro to Psychology 11th Edition',           'Highlighting in chapters 1-6, rest is clean. Comes with unused online access code.', 'fair',     20.00, 0, 1, 'Cengage',     'Library West',       'active', 1, NULL),
+(6,  3, 2, 'Retro Vinyl Desk Speakers',                 'Hand-built ash cabinets with aux and Bluetooth. Warm analog sound, perfect for a studio corner.', 'like_new', 120.00, 1, 1, NULL,          'Dorm Hall C',        'active', 1, DATE_SUB(NOW(), INTERVAL 2 HOUR)),
+(7,  7, 2, 'Quadcopter Starter Kit',                    '3D printed frame, spare props, flight controller presets, and a carrying case. Flies great.', 'good',    85.00, 0, 1, 'Custom Build', 'Engineering Lab',    'active', 1, NULL),
+(8,  1, 2, 'USB-C Portable Monitor 15.6"',              'Matte panel with magnetic case stand and calibration sheet. Used for one semester.', 'like_new', 95.00, 0, 1, 'ASUS',        'CS Building Lobby',  'active', 1, NULL),
+(9,  3, 2, 'Mechanical Keyboard (Cherry MX Brown)',      'Full-size layout with PBT keycaps and detachable cable. Great typing feel, too loud for my roommate.', 'good', 55.00, 1, 1, 'Keychron',    'Dorm Hall C',        'active', 1, NULL),
+(10, 5, 2, 'Noise-Canceling Headphones',                'Over-ear, 30hr battery, comes with hard case and airplane adapter. Small scratch on left cup.', 'fair', 70.00, 0, 1, 'Sony',        'Student Union',      'active', 1, DATE_SUB(NOW(), INTERVAL 12 HOUR)),
+(11, 4, 3, 'Reclaimed Canvas Jacket',                   'Indigo-dyed jacket with reinforced seams and hidden phone pocket. Size M.', 'like_new', 80.00, 1, 1, NULL,          'Fashion Lab',        'active', 1, NULL),
+(12, 4, 3, 'Hand Loomed Scarf Set',                     'Pair of plant-dyed scarves with gradient weaves. One warm-toned, one cool.', 'new', 35.00, 1, 2, NULL,          'Fashion Lab',        'active', 0, NULL),
+(13, 4, 3, 'Vintage Denim Overalls',                    'Authentic 90s find, perfectly broken in. Fits like a modern size S/M.', 'fair', 45.00, 1, 1, 'Levi\'s',     'Fashion Lab',        'active', 1, NULL),
+(14, 5, 4, 'Zero-Gravity Desk Chair',                   'Breathable mesh with adjustable lumbar kit and rolling mat included. Disassembles for transport.', 'good', 150.00, 0, 1, 'Autonomous',  'Off-campus (rides available)', 'active', 1, NULL),
+(15, 6, 4, 'Mini Hydroponic Grow Bar',                  'Self-watering LED planter for herbs. Great for dorm kitchens or windowsills.', 'like_new', 40.00, 1, 1, 'AeroGarden', 'Student Union',      'active', 1, DATE_SUB(NOW(), INTERVAL 6 HOUR)),
+(16, 1, 4, 'IKEA Kallax Shelf Unit (2x4)',              'White, no damage. Comes with 4 fabric drawer inserts. You pick up from my apartment.', 'good', 50.00, 0, 1, 'IKEA',        'Off-campus',         'active', 1, NULL),
+(17, 8, 5, 'Oil Paint Set — 24 Colors',                 'Professional grade tubes, most are 80%+ full. Selling because I switched to acrylics.', 'good', 55.00, 0, 1, 'Winsor & Newton', 'Art Building',   'active', 1, NULL),
+(18, 8, 5, 'Tabletop Easel with Storage Drawer',        'Beechwood easel, folds flat. Drawer holds brushes and small tubes.', 'like_new', 35.00, 1, 1, NULL,              'Art Building',   'active', 1, NULL),
+(19, 6, 6, 'Calc II Tutoring — 5 Sessions',             'One-on-one tutoring, 1 hour each. I got an A+ and love explaining limits and integrals.', 'new', 75.00, 1, 1, NULL, 'Library or Zoom', 'active', 0, NULL),
+(20, 7, 6, 'Concert Tickets x2 — Indie Night',          'Campus amphitheater, Saturday the 26th. Can\'t make it, selling at face value.', 'new', 30.00, 0, 2, NULL, 'Amphitheater Box Office', 'active', 0, NULL);
+
+INSERT INTO listings (id, user_id, category_id, title, description, item_condition, price, is_trade_allowed, quantity, brand, location, status, pickup_only) VALUES
+(21, 2, 1, 'Biology 101 Textbook',     'Sold this last week!', 'good', 35.00, 0, 1, NULL, 'Library', 'sold', 1),
+(22, 3, 2, 'Old Bluetooth Speaker',    'Pending review by admin.', 'fair', 15.00, 0, 1, 'JBL', NULL, 'pending', 1);
+
+--
+-- Listing Images
+--
+
+INSERT INTO listing_images (listing_id, image_path, is_primary, sort_order) VALUES
+(1,  'https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?auto=format&fit=crop&w=900&q=80', 1, 0),
+(1,  'https://images.unsplash.com/photo-1457694587812-e8bf29a43845?auto=format&fit=crop&w=900&q=80', 0, 1),
+(2,  'https://images.unsplash.com/photo-1457694587812-e8bf29a43845?auto=format&fit=crop&w=900&q=80', 1, 0),
+(3,  'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&w=900&q=80', 1, 0),
+(4,  'https://images.unsplash.com/photo-1513364776144-60967b0f800f?auto=format&fit=crop&w=900&q=80', 1, 0),
+(5,  'https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?auto=format&fit=crop&w=900&q=80', 1, 0),
+(6,  'https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=900&q=80', 1, 0),
+(6,  'https://images.unsplash.com/photo-1505740106531-4243f3831c55?auto=format&fit=crop&w=900&q=80', 0, 1),
+(6,  'https://images.unsplash.com/photo-1484704849700-09d5f5c0e9ce?auto=format&fit=crop&w=900&q=80', 0, 2),
+(7,  'https://images.unsplash.com/photo-1505740106531-4243f3831c55?auto=format&fit=crop&w=900&q=80', 1, 0),
+(8,  'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=900&q=80', 1, 0),
+(9,  'https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=900&q=80', 1, 0),
+(10, 'https://images.unsplash.com/photo-1484704849700-09d5f5c0e9ce?auto=format&fit=crop&w=900&q=80', 1, 0),
+(11, 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=900&q=80', 1, 0),
+(12, 'https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?auto=format&fit=crop&w=900&q=80', 1, 0),
+(13, 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=900&q=80', 1, 0),
+(14, 'https://images.unsplash.com/photo-1493666438817-866a91353ca9?auto=format&fit=crop&w=900&q=80', 1, 0),
+(15, 'https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?auto=format&fit=crop&w=900&q=80', 1, 0),
+(16, 'https://images.unsplash.com/photo-1487017159836-4e23ece2e4cf?auto=format&fit=crop&w=900&q=80', 1, 0),
+(17, 'https://images.unsplash.com/photo-1513364776144-60967b0f800f?auto=format&fit=crop&w=900&q=80', 1, 0),
+(18, 'https://images.unsplash.com/photo-1513364776144-60967b0f800f?auto=format&fit=crop&w=900&q=80', 1, 0),
+(19, 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&w=900&q=80', 1, 0),
+(20, 'https://images.unsplash.com/photo-1505740106531-4243f3831c55?auto=format&fit=crop&w=900&q=80', 1, 0);
+
+--
+-- Price History (triggers price drop badges)
+--
+
+INSERT INTO price_history (listing_id, old_price, new_price, changed_at) VALUES
+(1,  85.00,  65.00, DATE_SUB(NOW(), INTERVAL 3 DAY)),
+(5,  30.00,  20.00, DATE_SUB(NOW(), INTERVAL 1 DAY)),
+(10, 95.00,  70.00, DATE_SUB(NOW(), INTERVAL 5 DAY)),
+(14, 200.00, 150.00, DATE_SUB(NOW(), INTERVAL 2 DAY)),
+(9,  65.00,  55.00, DATE_SUB(NOW(), INTERVAL 12 HOUR));
+
+--
+-- Conversations & Messages
+--
+
+INSERT INTO conversations (id, listing_id, created_by, created_at) VALUES
+(1, 1, 1, DATE_SUB(NOW(), INTERVAL 2 DAY)),
+(2, 6, 1, DATE_SUB(NOW(), INTERVAL 1 DAY)),
+(3, 11, 5, DATE_SUB(NOW(), INTERVAL 3 DAY)),
+(4, 20, 6, DATE_SUB(NOW(), INTERVAL 6 HOUR));
+
+INSERT INTO conversation_participants (conversation_id, user_id) VALUES
+(1, 1), (1, 2),
+(2, 1), (2, 3),
+(3, 5), (3, 4),
+(4, 6), (4, 7);
+
+INSERT INTO messages (conversation_id, sender_id, message_body, is_read, created_at) VALUES
+(1, 1, 'Hey, is this still available?', 1, DATE_SUB(NOW(), INTERVAL 2 DAY)),
+(1, 2, 'Yes! It is. Are you free to pick up tomorrow?', 1, DATE_SUB(NOW(), INTERVAL 47 HOUR)),
+(1, 1, 'Works for me. Library West lobby at 3pm?', 1, DATE_SUB(NOW(), INTERVAL 46 HOUR)),
+(1, 2, 'Perfect, see you then!', 1, DATE_SUB(NOW(), INTERVAL 45 HOUR)),
+(2, 1, 'Hey, is this still available?', 1, DATE_SUB(NOW(), INTERVAL 1 DAY)),
+(2, 3, 'Still got them! Want to come hear them first?', 0, DATE_SUB(NOW(), INTERVAL 23 HOUR)),
+(3, 5, 'Love the jacket! Would you trade for a pair of vintage boots?', 1, DATE_SUB(NOW(), INTERVAL 3 DAY)),
+(3, 4, 'What size are the boots? Send me a pic if you can.', 1, DATE_SUB(NOW(), INTERVAL 71 HOUR)),
+(3, 5, 'Size 8, barely worn. I will bring them by the fashion lab.', 0, DATE_SUB(NOW(), INTERVAL 70 HOUR)),
+(4, 6, 'Hey, is this still available?', 0, DATE_SUB(NOW(), INTERVAL 6 HOUR));
+
+--
+-- Notifications
+--
+
+INSERT INTO notifications (user_id, type, title, body, reference_id, is_read, created_at) VALUES
+(2, 'message', 'New message about your listing', 'Hey, is this still available?', 1, 1, DATE_SUB(NOW(), INTERVAL 2 DAY)),
+(3, 'message', 'New message about your listing', 'Hey, is this still available?', 6, 1, DATE_SUB(NOW(), INTERVAL 1 DAY)),
+(4, 'message', 'New message about your listing', 'Love the jacket! Would you trade for a pair of vintage boots?', 11, 1, DATE_SUB(NOW(), INTERVAL 3 DAY)),
+(7, 'message', 'New message about your listing', 'Hey, is this still available?', 20, 0, DATE_SUB(NOW(), INTERVAL 6 HOUR));
+
+--
+-- Favorites
+--
+
+INSERT INTO favorites (user_id, listing_id, created_at) VALUES
+(1, 6,  DATE_SUB(NOW(), INTERVAL 3 DAY)),
+(1, 11, DATE_SUB(NOW(), INTERVAL 2 DAY)),
+(1, 14, DATE_SUB(NOW(), INTERVAL 1 DAY)),
+(1, 17, DATE_SUB(NOW(), INTERVAL 12 HOUR)),
+(5, 9,  DATE_SUB(NOW(), INTERVAL 1 DAY)),
+(5, 15, DATE_SUB(NOW(), INTERVAL 6 HOUR)),
+(6, 1,  DATE_SUB(NOW(), INTERVAL 2 DAY));
+
+--
+-- Saved Searches
+--
+
+INSERT INTO saved_searches (user_id, query, category_id, is_active, created_at) VALUES
+(1, 'textbook',    1, 1, DATE_SUB(NOW(), INTERVAL 5 DAY)),
+(1, 'keyboard',    2, 1, DATE_SUB(NOW(), INTERVAL 3 DAY)),
+(1, 'desk chair',  4, 1, DATE_SUB(NOW(), INTERVAL 1 DAY)),
+(5, 'headphones',  2, 1, DATE_SUB(NOW(), INTERVAL 2 DAY)),
+(6, 'art supplies', 5, 1, DATE_SUB(NOW(), INTERVAL 4 DAY));
+
+--
+-- Reviews
+--
+
+INSERT INTO reviews (reviewer_id, reviewee_id, listing_id, rating, comment, created_at) VALUES
+(1, 2, 21, 5, 'Super fast and friendly. Book was exactly as described.', DATE_SUB(NOW(), INTERVAL 7 DAY)),
+(5, 4, 11, 4, 'Great jacket, small delay on meetup but worked out.', DATE_SUB(NOW(), INTERVAL 4 DAY)),
+(6, 2, 21, 5, 'Alana is awesome. Easy trade.', DATE_SUB(NOW(), INTERVAL 6 DAY));
+
+UPDATE users SET average_rating = 5.00, total_reviews = 2 WHERE id = 2;
+UPDATE users SET average_rating = 4.00, total_reviews = 1 WHERE id = 4;
+
+-- ============================================================
+-- Test Accounts Quick Reference
+-- ============================================================
+-- All passwords: password
+--
+-- jordan@campus.edu  (id=1) — Buyer, has favorites and saved searches
+-- alana@campus.edu   (id=2) — Seller, 2 reviews, 15min response time
+-- mateo@campus.edu   (id=3) — Seller, 45min response time
+-- kai@campus.edu     (id=4) — Seller, 1 review, 2hr response time
+-- serena@campus.edu  (id=5) — Alumni seller
+-- noah@campus.edu    (id=6) — Student seller
+-- priya@campus.edu   (id=7) — Has unread message, 1hr response time
+-- ivy@campus.edu     (id=8) — Faculty seller, 3hr response time
+
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
