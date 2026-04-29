@@ -255,4 +255,120 @@ class MessagesController extends Controller
         $row = $stmt->fetch();
         return $row ? (int) $row['user_id'] : null;
     }
+
+    // ── API: Poll for new messages (JSON) ───────────────────
+
+    /**
+     * Returns messages newer than a given message ID as JSON.
+     * Called by the polling JS every few seconds.
+     */
+    public function poll(): void
+    {
+        Auth::requireLogin();
+
+        $userId = (int) $_SESSION['user_id'];
+        $conversationId = (int) ($_GET['id'] ?? 0);
+        $afterId = (int) ($_GET['after'] ?? 0);
+
+        if ($conversationId <= 0 || !$this->isParticipant($userId, $conversationId)) {
+            $this->json(['messages' => []], 403);
+        }
+
+        $db = Database::getInstance()->getConnection();
+
+        $sql = "SELECT m.id, m.sender_id, m.message_body, m.created_at,
+                       u.first_name AS sender_first_name
+                FROM messages m
+                INNER JOIN users u ON u.id = m.sender_id
+                WHERE m.conversation_id = :conv_id AND m.id > :after_id
+                ORDER BY m.created_at ASC";
+
+        $stmt = $db->prepare($sql);
+        $stmt->bindValue(':conv_id', $conversationId, PDO::PARAM_INT);
+        $stmt->bindValue(':after_id', $afterId, PDO::PARAM_INT);
+        $stmt->execute();
+
+        $messages = [];
+        foreach ($stmt->fetchAll() as $row) {
+            $messages[] = [
+                'id' => (int) $row['id'],
+                'sender_id' => (int) $row['sender_id'],
+                'sender_name' => $row['sender_first_name'],
+                'body' => $row['message_body'],
+                'time' => date('M j, g:ia', strtotime($row['created_at'])),
+                'is_mine' => (int) $row['sender_id'] === $userId,
+            ];
+        }
+
+        // Mark new messages from the other person as read
+        if (!empty($messages)) {
+            $this->markAsRead($conversationId, $userId);
+        }
+
+        $this->json(['messages' => $messages]);
+    }
+
+    /**
+     * Send a message via AJAX (JSON response instead of redirect).
+     */
+    public function sendAjax(): void
+    {
+        Auth::requireLogin();
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $this->json(['error' => 'POST required'], 405);
+        }
+
+        // Read JSON body
+        $input = json_decode(file_get_contents('php://input'), true);
+        $userId = (int) $_SESSION['user_id'];
+        $conversationId = (int) ($input['conversation_id'] ?? 0);
+        $body = trim($input['message'] ?? '');
+
+        if ($conversationId <= 0 || $body === '') {
+            $this->json(['error' => 'Invalid message'], 400);
+        }
+
+        if (!$this->isParticipant($userId, $conversationId)) {
+            $this->json(['error' => 'Not authorized'], 403);
+        }
+
+        $db = Database::getInstance()->getConnection();
+
+        $sql = "INSERT INTO messages (conversation_id, sender_id, message_body, created_at)
+                VALUES (:conv_id, :sender_id, :body, NOW())";
+        $stmt = $db->prepare($sql);
+        $stmt->bindValue(':conv_id', $conversationId, PDO::PARAM_INT);
+        $stmt->bindValue(':sender_id', $userId, PDO::PARAM_INT);
+        $stmt->bindValue(':body', $body, PDO::PARAM_STR);
+        $stmt->execute();
+
+        $messageId = (int) $db->lastInsertId();
+
+        // Notification for the other person
+        $otherUserId = $this->getOtherParticipant($conversationId, $userId);
+        if ($otherUserId !== null) {
+            $notifSql = "INSERT INTO notifications (user_id, type, title, body, reference_id, created_at)
+                         VALUES (:user_id, 'message', 'New message', :body, :ref_id, NOW())";
+            $notifStmt = $db->prepare($notifSql);
+            $notifStmt->bindValue(':user_id', $otherUserId, PDO::PARAM_INT);
+            $notifStmt->bindValue(':body', mb_substr($body, 0, 200), PDO::PARAM_STR);
+            $notifStmt->bindValue(':ref_id', $conversationId, PDO::PARAM_INT);
+            $notifStmt->execute();
+
+            (new User())->updateResponseTime($userId);
+        }
+
+        $this->json([
+            'success' => true,
+            'message' => [
+                'id' => $messageId,
+                'sender_id' => $userId,
+                'sender_name' => $_SESSION['user_first_name'] ?? '',
+                'body' => $body,
+                'time' => date('M j, g:ia'),
+                'is_mine' => true,
+            ],
+        ]);
+    }
 }

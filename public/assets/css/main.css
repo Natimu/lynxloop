@@ -1516,6 +1516,26 @@ footer {
     gap: 0.6rem;
 }
 
+/* ── Live polling indicator ──────────────────────────── */
+
+.live-indicator {
+    color: #22c55e;
+    font-size: 0.6rem;
+    margin-left: auto;
+    animation: live-pulse 2s ease-in-out infinite;
+}
+
+.live-indicator.live-flash {
+    color: #4ade80;
+    animation: none;
+    text-shadow: 0 0 8px rgba(34, 197, 94, 0.6);
+}
+
+@keyframes live-pulse {
+    0%, 100% { opacity: 0.4; }
+    50% { opacity: 1; }
+}
+
 /* ── Message bubbles ─────────────────────────────────────── */
 
 .message-thread {

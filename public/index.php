@@ -67,7 +67,9 @@ $router->post('listings/delete-saved-search', 'ListingsController@deleteSavedSea
 // Messages
 $router->get('messages', 'MessagesController@inbox');
 $router->get('messages/show', 'MessagesController@show');
+$router->get('messages/poll', 'MessagesController@poll');
 $router->post('messages/reply', 'MessagesController@reply');
+$router->post('messages/send', 'MessagesController@sendAjax');
 
 // Profile
 $router->get('profile', 'ProfileController@index');
