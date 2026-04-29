@@ -37,6 +37,10 @@ if (isset($_SESSION['flash_error'])) {
         </div>
 
         <?php if ($isLoggedIn): ?>
+            <form action="/listings/search" method="GET" class="header-search">
+                <input type="text" name="q" placeholder="Search listings…" class="header-search-input"
+                       value="<?= htmlspecialchars($_GET['q'] ?? '', ENT_QUOTES, 'UTF-8') ?>">
+            </form>
             <div class="header-actions">
                 <form action="/logout" method="POST">
                     <button class="logout-button" type="submit">Logout</button>
@@ -127,6 +131,16 @@ if (isset($_SESSION['flash_error'])) {
                 }
             });
         })();
+
+        // Auto-dismiss flash messages after 4 seconds
+        document.querySelectorAll('.flash-message').forEach(flash => {
+            setTimeout(() => {
+                flash.style.transition = 'opacity 400ms ease, transform 400ms ease';
+                flash.style.opacity = '0';
+                flash.style.transform = 'translateY(-8px)';
+                setTimeout(() => flash.remove(), 400);
+            }, 4000);
+        });
     </script>
     <script src="/js/image-upload.js"></script>
 </body>

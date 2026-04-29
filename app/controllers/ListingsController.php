@@ -6,6 +6,11 @@ use App\Core\Auth;
 use App\Core\Controller;
 use App\Models\Listing;
 use App\Models\Tables;
+use App\Models\Favorite;
+use App\Models\Message;
+use App\Models\PriceHistory;
+use App\Models\SavedSearch;
+use App\Models\User;
 
 class ListingsController extends Controller
 {
@@ -325,5 +330,209 @@ class ListingsController extends Controller
         finfo_close($finfo);
 
         return is_string($mimeType) ? $mimeType : null;
+    }
+
+    // ── Listing Detail Page ─────────────────────────────────
+
+    public function show(): void
+    {
+        $id = (int) ($_GET['id'] ?? 0);
+
+        if ($id <= 0) {
+            http_response_code(404);
+            echo '404 - Listing not found';
+            return;
+        }
+
+        $listing = $this->listingModel->getDetailWithImages($id);
+
+        if (!$listing) {
+            http_response_code(404);
+            echo '404 - Listing not found';
+            return;
+        }
+
+        $similar = $this->listingModel->getSimilar($id, (int) $listing['category_id'], 4);
+        $priceDrop = (new PriceHistory())->getLatestDrop($id);
+
+        $isLoggedIn = isset($_SESSION['user_id']);
+        $isFavorited = false;
+        $isOwner = false;
+        $canBump = false;
+
+        if ($isLoggedIn) {
+            $userId = (int) $_SESSION['user_id'];
+            $isFavorited = (new Favorite())->find($userId, $id) !== null;
+            $isOwner = (int) $listing['user_id'] === $userId;
+            $canBump = $isOwner && $this->listingModel->canBump($id);
+        }
+
+        $this->view('listings/show', [
+            'title' => htmlspecialchars($listing['title']) . ' | Lynxloop',
+            'isLoggedIn' => $isLoggedIn,
+            'firstName' => $_SESSION['user_first_name'] ?? null,
+            'listing' => $listing,
+            'similar' => $similar,
+            'priceDrop' => $priceDrop,
+            'isFavorited' => $isFavorited,
+            'isOwner' => $isOwner,
+            'canBump' => $canBump,
+            'conditionOptions' => $this->conditionOptions(),
+        ]);
+    }
+
+    // ── Bump ────────────────────────────────────────────────
+
+    public function bump(): void
+    {
+        Auth::requireLogin();
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $this->redirect('/dashboard');
+        }
+
+        $listingId = (int) ($_POST['listing_id'] ?? 0);
+        $userId = (int) $_SESSION['user_id'];
+
+        if ($this->listingModel->bump($listingId, $userId)) {
+            $_SESSION['flash_success'] = 'Listing bumped to the top!';
+        } else {
+            $_SESSION['flash_error'] = 'You can only bump once every 24 hours.';
+        }
+
+        $this->redirect('/listings/show?id=' . $listingId);
+    }
+
+    // ── Favorite Toggle ─────────────────────────────────────
+
+    public function toggleFavorite(): void
+    {
+        Auth::requireLogin();
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $this->json(['error' => 'POST required'], 405);
+        }
+
+        $listingId = (int) ($_POST['listing_id'] ?? 0);
+        $userId = (int) $_SESSION['user_id'];
+
+        if ($listingId <= 0) {
+            $this->json(['error' => 'Invalid listing'], 400);
+        }
+
+        $favoriteModel = new Favorite();
+        $isFavorited = $favoriteModel->toggle($userId, $listingId);
+
+        $this->json(['favorited' => $isFavorited]);
+    }
+
+    // ── Quick Message ("Still available?") ──────────────────
+
+    public function quickMessage(): void
+    {
+        Auth::requireLogin();
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $this->redirect('/dashboard');
+        }
+
+        $listingId = (int) ($_POST['listing_id'] ?? 0);
+        $userId = (int) $_SESSION['user_id'];
+        $message = trim($_POST['message'] ?? 'Hey, is this still available?');
+
+        if ($listingId <= 0) {
+            $_SESSION['flash_error'] = 'Invalid listing.';
+            $this->redirect('/dashboard');
+        }
+
+        $listing = $this->listingModel->findById($listingId);
+
+        if (!$listing) {
+            $_SESSION['flash_error'] = 'Listing not found.';
+            $this->redirect('/dashboard');
+        }
+
+        $ownerId = (int) $listing['user_id'];
+
+        if ($ownerId === $userId) {
+            $_SESSION['flash_error'] = 'You cannot message yourself.';
+            $this->redirect('/listings/show?id=' . $listingId);
+        }
+
+        $messageModel = new Message();
+        $messageModel->sendQuickMessage($userId, $ownerId, $listingId, $message);
+
+        // Update seller's response time cache
+        (new User())->updateResponseTime($ownerId);
+
+        $_SESSION['flash_success'] = 'Message sent to the seller!';
+        $this->redirect('/listings/show?id=' . $listingId);
+    }
+
+    // ── Search ──────────────────────────────────────────────
+
+    public function search(): void
+    {
+        $query = trim($_GET['q'] ?? '');
+        $categoryId = !empty($_GET['category_id']) ? (int) $_GET['category_id'] : null;
+
+        $results = [];
+        if ($query !== '') {
+            $results = $this->listingModel->search($query, $categoryId);
+        }
+
+        $this->view('listings/search', [
+            'title' => 'Search | Lynxloop',
+            'isLoggedIn' => isset($_SESSION['user_id']),
+            'firstName' => $_SESSION['user_first_name'] ?? null,
+            'query' => $query,
+            'categoryId' => $categoryId,
+            'results' => $results,
+            'categoryOptions' => $this->tablesModel->categoryOptions(),
+        ]);
+    }
+
+    // ── Saved Searches ──────────────────────────────────────
+
+    public function saveSearch(): void
+    {
+        Auth::requireLogin();
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $this->redirect('/listings/search');
+        }
+
+        $query = trim($_POST['query'] ?? '');
+        $categoryId = !empty($_POST['category_id']) ? (int) $_POST['category_id'] : null;
+        $userId = (int) $_SESSION['user_id'];
+
+        if ($query === '') {
+            $_SESSION['flash_error'] = 'Enter a search term to save.';
+            $this->redirect('/listings/search');
+        }
+
+        $savedSearchModel = new SavedSearch();
+        $savedSearchModel->createSearch($userId, $query, $categoryId);
+
+        $_SESSION['flash_success'] = 'Search alert saved! You will be notified when matching listings appear.';
+        $this->redirect('/listings/search?q=' . urlencode($query));
+    }
+
+    public function deleteSavedSearch(): void
+    {
+        Auth::requireLogin();
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $this->redirect('/dashboard');
+        }
+
+        $searchId = (int) ($_POST['search_id'] ?? 0);
+        $userId = (int) $_SESSION['user_id'];
+
+        $savedSearchModel = new SavedSearch();
+        $savedSearchModel->deleteSearch($searchId, $userId);
+
+        $_SESSION['flash_success'] = 'Search alert removed.';
+        $this->redirect('/dashboard');
     }
 }
