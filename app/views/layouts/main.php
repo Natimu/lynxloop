@@ -14,12 +14,12 @@ $firstName = $firstName ?? ($currentUser ?? 'User');
 $initial = strtoupper(mb_substr(trim((string) $firstName), 0, 1) ?: 'U');
 $userRole = $_SESSION['user_role'] ?? 'Member';
 $accountMenu = [
-    ['label' => 'Profile', 'href' => '/dashboard#profile'],
-    ['label' => 'Listings', 'href' => '/dashboard#listings'],
-    ['label' => 'Manage Listings', 'href' => '/dashboard#manage'],
-    ['label' => 'Messages', 'href' => '/dashboard#messages'],
-    ['label' => 'About', 'href' => '/dashboard#about'],
-    ['label' => 'Support', 'href' => '/dashboard#support'],
+    ['label' => 'Profile', 'href' => '/profile'],
+    ['label' => 'Listings', 'href' => '/dashboard'],
+    ['label' => 'Manage Listings', 'href' => '/dashboard#my-listings'],
+    ['label' => 'Messages', 'href' => '/messages'],
+    ['label' => 'About', 'href' => '/about'],
+    ['label' => 'Support', 'href' => '/support'],
 ];
 $flashSuccess = $_SESSION['flash_success'] ?? null;
 $flashError = $_SESSION['flash_error'] ?? null;

@@ -6,14 +6,19 @@ class HomeController extends Controller
 {
     public function index(): void
     {
-      $data = [
-        'title' => 'Home | Lynxloop',
-        'isLoggedIn' => isset($_SESSION['user_id']),
-        'currentUser' => $_SESSION['user_name'] ?? null,
-        'userId' => $_SESSION['user_id'] ?? null,
-        'firstName' => $_SESSION['user_first_name'] ?? null
-        ];
-        
-        $this->view('home/index', $data);
+        // Logged-in users go straight to dashboard
+        if (isset($_SESSION['user_id'])) {
+            $this->redirect('/dashboard');
+        }
+
+        $this->viewRaw('Home/index', [
+            'title' => 'LynxLoop — Campus Exchange',
+            'isLoggedIn' => false,
+            'userId' => null,
+            'firstName' => null,
+            'errors' => [],
+            'old' => [],
+            'activeTab' => 'login',
+        ]);
     }
 }
