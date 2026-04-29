@@ -58,7 +58,7 @@ class User extends Model
     public function getById(int $id): array|false
     {
         $sql = "SELECT id, first_name, last_name, email, university_role, verification_status,
-                       account_status, avg_response_minutes, average_rating, total_reviews, created_at
+                       account_status, avg_response_minutes, average_rating, total_reviews, bio, created_at
                 FROM {$this->user_table}
                 WHERE id = :id
                 LIMIT 1";

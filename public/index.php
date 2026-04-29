@@ -22,6 +22,8 @@ require_once __DIR__ . '/../app/controllers/AuthController.php';
 require_once __DIR__ . '/../app/controllers/DashboardController.php';
 require_once __DIR__ . '/../app/controllers/ListingsController.php';
 require_once __DIR__ . '/../app/controllers/MessagesController.php';
+require_once __DIR__ . '/../app/controllers/ProfileController.php';
+require_once __DIR__ . '/../app/controllers/PagesController.php';
 require_once __DIR__ . '/../app/core/Auth.php';
 
 if (session_status() !== PHP_SESSION_ACTIVE){
@@ -65,7 +67,16 @@ $router->post('listings/delete-saved-search', 'ListingsController@deleteSavedSea
 // Messages
 $router->get('messages', 'MessagesController@inbox');
 $router->get('messages/show', 'MessagesController@show');
+$router->get('messages/poll', 'MessagesController@poll');
 $router->post('messages/reply', 'MessagesController@reply');
+$router->post('messages/send', 'MessagesController@sendAjax');
+
+// Profile
+$router->get('profile', 'ProfileController@index');
+
+// Static pages
+$router->get('about', 'PagesController@about');
+$router->get('support', 'PagesController@support');
 
 $router->post('logout', 'AuthController@logout');
 

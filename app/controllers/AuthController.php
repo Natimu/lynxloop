@@ -6,18 +6,17 @@ use App\Models\User;
 
 class AuthController extends Controller
 {
-    
     public function registerForm(): void
     {
         Auth::requireGuest();
-        if (isset($_SESSION['user_id'])) {
-            
-            $this->redirect('/register');
-        }
-
-        $this->view('auth/register', [
+        $this->viewRaw('Home/index', [
+            'title' => 'Register | Lynxloop',
+            'isLoggedIn' => false,
+            'userId' => null,
+            'firstName' => null,
             'errors' => [],
-            'old' => []
+            'old' => [],
+            'activeTab' => 'register',
         ]);
     }
 
@@ -40,29 +39,25 @@ class AuthController extends Controller
             'first_name' => $firstName,
             'last_name' => $lastName,
             'email' => $email,
-            'university_role' => $universityRole
+            'university_role' => $universityRole,
         ];
 
         if ($firstName === '') {
             $errors['first_name'] = 'First name is required.';
         }
-
         if ($lastName === '') {
             $errors['last_name'] = 'Last name is required.';
         }
-
         if ($email === '') {
             $errors['email'] = 'Email is required.';
         } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             $errors['email'] = 'Enter a valid email address.';
         }
-
         if ($password === '') {
             $errors['password'] = 'Password is required.';
         } elseif (strlen($password) < 6) {
             $errors['password'] = 'Password must be at least 6 characters.';
         }
-
         if ($confirmPassword === '') {
             $errors['confirm_password'] = 'Please confirm your password.';
         } elseif ($password !== $confirmPassword) {
@@ -84,9 +79,14 @@ class AuthController extends Controller
         }
 
         if (!empty($errors)) {
-            $this->view('auth/register', [
+            $this->viewRaw('Home/index', [
+                'title' => 'Register | Lynxloop',
+                'isLoggedIn' => false,
+                'userId' => null,
+                'firstName' => null,
                 'errors' => $errors,
-                'old' => $old
+                'old' => $old,
+                'activeTab' => 'register',
             ]);
             return;
         }
@@ -100,13 +100,18 @@ class AuthController extends Controller
             'password_hash' => $passwordHash,
             'university_role' => $universityRole,
             'verification_status' => 'pending',
-            'account_status' => 'active'
+            'account_status' => 'active',
         ]);
 
         if (!$created) {
-            $this->view('auth/register', [
+            $this->viewRaw('Home/index', [
+                'title' => 'Register | Lynxloop',
+                'isLoggedIn' => false,
+                'userId' => null,
+                'firstName' => null,
                 'errors' => ['general' => 'Registration failed. Please try again.'],
-                'old' => $old
+                'old' => $old,
+                'activeTab' => 'register',
             ]);
             return;
         }
@@ -116,81 +121,92 @@ class AuthController extends Controller
         $_SESSION['user_id'] = $newUser['id'];
         $_SESSION['user_first_name'] = $newUser['first_name'];
         $_SESSION['user_role'] = $newUser['university_role'];
-        $this->redirect('');
+        $this->redirect('/dashboard');
     }
-
 
     public function loginForm(): void
     {
         Auth::requireGuest();
-        if (isset($_SESSION['user_id'])) {
-            $this->redirect('');
-        }
-        $this->view('auth/login', [
+        $this->viewRaw('Home/index', [
             'title' => 'Login | Lynxloop',
+            'isLoggedIn' => false,
+            'userId' => null,
+            'firstName' => null,
             'errors' => [],
-            'old' => []
+            'old' => [],
+            'activeTab' => 'login',
         ]);
     }
 
-    
-public function login(): void
-{
-    Auth::requireGuest();
-    
-    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-        $this->redirect('login');
+    public function login(): void
+    {
+        Auth::requireGuest();
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $this->redirect('/login');
+        }
+
+        $email = trim($_POST['email'] ?? '');
+        $password = $_POST['password'] ?? '';
+
+        $errors = [];
+        $old = ['email' => $email];
+
+        if ($email === '') {
+            $errors['email'] = 'Email is required.';
+        }
+        if ($password === '') {
+            $errors['password'] = 'Password is required.';
+        }
+
+        if (!empty($errors)) {
+            $this->viewRaw('Home/index', [
+                'title' => 'Login | Lynxloop',
+                'isLoggedIn' => false,
+                'userId' => null,
+                'firstName' => null,
+                'errors' => $errors,
+                'old' => $old,
+                'activeTab' => 'login',
+            ]);
+            return;
+        }
+
+        $userModel = new User();
+        $user = $userModel->findByEmail($email);
+
+        if (!$user || !password_verify($password, $user['password_hash'])) {
+            $this->viewRaw('Home/index', [
+                'title' => 'Login | Lynxloop',
+                'isLoggedIn' => false,
+                'userId' => null,
+                'firstName' => null,
+                'errors' => ['general' => 'Invalid email or password.'],
+                'old' => $old,
+                'activeTab' => 'login',
+            ]);
+            return;
+        }
+
+        if ($user['account_status'] !== 'active') {
+            $this->viewRaw('Home/index', [
+                'title' => 'Login | Lynxloop',
+                'isLoggedIn' => false,
+                'userId' => null,
+                'firstName' => null,
+                'errors' => ['general' => 'Your account is not active.'],
+                'old' => $old,
+                'activeTab' => 'login',
+            ]);
+            return;
+        }
+
+        session_regenerate_id(true);
+
+        $_SESSION['user_id'] = $user['id'];
+        $_SESSION['user_first_name'] = $user['first_name'];
+        $_SESSION['user_role'] = $user['university_role'];
+        $this->redirect('/dashboard');
     }
-
-    $email = trim($_POST['email'] ?? '');
-    $password = $_POST['password'] ?? '';
-
-    $errors = [];
-    $old = ['email' => $email];
-
-    if ($email === '') {
-        $errors['email'] = 'Email is required.';
-    }
-
-    if ($password === '') {
-        $errors['password'] = 'Password is required.';
-    }
-
-    if (!empty($errors)) {
-        $this->view('auth/login', [
-            'errors' => $errors,
-            'old' => $old
-        ]);
-        return;
-    }
-
-    $userModel = new User();
-    $user = $userModel->findByEmail($email);
-
-    if (!$user || !password_verify($password, $user['password_hash'])) {
-        $this->view('auth/login', [
-            'errors' => ['general' => 'Invalid email or password.'],
-            'old' => $old
-        ]);
-        return;
-    }
-
-    if ($user['account_status'] !== 'active') {
-        $this->view('auth/login', [
-            'errors' => ['general' => 'Your account is not active.'],
-            'old' => $old
-        ]);
-        return;
-    }
-
-    session_regenerate_id(true);
-
-    $_SESSION['user_id'] = $user['id'];
-    $_SESSION['user_first_name'] = $user['first_name'];
-    $_SESSION['user_role'] = $user['university_role'];
-    
-    $this->redirect('/dashboard');
-}
 
     public function logout(): void
     {
@@ -210,6 +226,6 @@ public function login(): void
         }
 
         session_destroy();
-        $this->redirect('/login');
+        $this->redirect('/');
     }
 }

@@ -804,29 +804,49 @@ INSERT INTO listings (id, user_id, category_id, title, description, item_conditi
 --
 
 INSERT INTO listing_images (listing_id, image_path, is_primary, sort_order) VALUES
-(1,  'https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?auto=format&fit=crop&w=900&q=80', 1, 0),
-(1,  'https://images.unsplash.com/photo-1457694587812-e8bf29a43845?auto=format&fit=crop&w=900&q=80', 0, 1),
-(2,  'https://images.unsplash.com/photo-1457694587812-e8bf29a43845?auto=format&fit=crop&w=900&q=80', 1, 0),
-(3,  'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&w=900&q=80', 1, 0),
+-- 1: Organic Chemistry Textbooks
+(1,  'https://images.unsplash.com/photo-1532012197267-da84d127e765?auto=format&fit=crop&w=900&q=80', 1, 0),
+(1,  'https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&w=900&q=80', 0, 1),
+-- 2: Data Structures CS Workbook
+(2,  'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=900&q=80', 1, 0),
+-- 3: Microeconomics Notes
+(3,  'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&w=900&q=80', 1, 0),
+-- 4: Sketch Pads
 (4,  'https://images.unsplash.com/photo-1513364776144-60967b0f800f?auto=format&fit=crop&w=900&q=80', 1, 0),
-(5,  'https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?auto=format&fit=crop&w=900&q=80', 1, 0),
-(6,  'https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=900&q=80', 1, 0),
-(6,  'https://images.unsplash.com/photo-1505740106531-4243f3831c55?auto=format&fit=crop&w=900&q=80', 0, 1),
-(6,  'https://images.unsplash.com/photo-1484704849700-09d5f5c0e9ce?auto=format&fit=crop&w=900&q=80', 0, 2),
-(7,  'https://images.unsplash.com/photo-1505740106531-4243f3831c55?auto=format&fit=crop&w=900&q=80', 1, 0),
-(8,  'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=900&q=80', 1, 0),
-(9,  'https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=900&q=80', 1, 0),
-(10, 'https://images.unsplash.com/photo-1484704849700-09d5f5c0e9ce?auto=format&fit=crop&w=900&q=80', 1, 0),
-(11, 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=900&q=80', 1, 0),
-(12, 'https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?auto=format&fit=crop&w=900&q=80', 1, 0),
-(13, 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=900&q=80', 1, 0),
-(14, 'https://images.unsplash.com/photo-1493666438817-866a91353ca9?auto=format&fit=crop&w=900&q=80', 1, 0),
-(15, 'https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?auto=format&fit=crop&w=900&q=80', 1, 0),
-(16, 'https://images.unsplash.com/photo-1487017159836-4e23ece2e4cf?auto=format&fit=crop&w=900&q=80', 1, 0),
-(17, 'https://images.unsplash.com/photo-1513364776144-60967b0f800f?auto=format&fit=crop&w=900&q=80', 1, 0),
+-- 5: Psychology Textbook
+(5,  'https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&w=900&q=80', 1, 0),
+-- 6: Desk Speakers
+(6,  'https://images.unsplash.com/photo-1545454675-3531b543be5d?auto=format&fit=crop&w=900&q=80', 1, 0),
+(6,  'https://images.unsplash.com/photo-1558618666-fcd25c85f82e?auto=format&fit=crop&w=900&q=80', 0, 1),
+(6,  'https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?auto=format&fit=crop&w=900&q=80', 0, 2),
+-- 7: Quadcopter Drone Kit
+(7,  'https://images.unsplash.com/photo-1507582020474-9a35b7d455d9?auto=format&fit=crop&w=900&q=80', 1, 0),
+-- 8: Portable Monitor
+(8,  'https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?auto=format&fit=crop&w=900&q=80', 1, 0),
+-- 9: Mechanical Keyboard
+(9,  'https://images.unsplash.com/photo-1618384887929-16ec33fab9ef?auto=format&fit=crop&w=900&q=80', 1, 0),
+-- 10: Noise-Canceling Headphones
+(10, 'https://images.unsplash.com/photo-1583394838336-acd977736f90?auto=format&fit=crop&w=900&q=80', 1, 0),
+-- 11: Canvas Jacket
+(11, 'https://images.unsplash.com/photo-1551028719-00167b16eac5?auto=format&fit=crop&w=900&q=80', 1, 0),
+-- 12: Scarf Set
+(12, 'https://images.unsplash.com/photo-1520903920243-00d872a2d1c9?auto=format&fit=crop&w=900&q=80', 1, 0),
+-- 13: Vintage Denim Overalls
+(13, 'https://images.unsplash.com/photo-1565084888279-aca607ecce0c?auto=format&fit=crop&w=900&q=80', 1, 0),
+-- 14: Desk Chair
+(14, 'https://images.unsplash.com/photo-1580480055273-228ff5388ef8?auto=format&fit=crop&w=900&q=80', 1, 0),
+-- 15: Hydroponic Grow Bar
+(15, 'https://images.unsplash.com/photo-1466692476868-aef1dfb1e735?auto=format&fit=crop&w=900&q=80', 1, 0),
+-- 16: IKEA Kallax Shelf
+(16, 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=900&q=80', 1, 0),
+-- 17: Oil Paint Set
+(17, 'https://images.unsplash.com/photo-1460661419201-fd4cecdf8a8b?auto=format&fit=crop&w=900&q=80', 1, 0),
+-- 18: Tabletop Easel
 (18, 'https://images.unsplash.com/photo-1513364776144-60967b0f800f?auto=format&fit=crop&w=900&q=80', 1, 0),
-(19, 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&w=900&q=80', 1, 0),
-(20, 'https://images.unsplash.com/photo-1505740106531-4243f3831c55?auto=format&fit=crop&w=900&q=80', 1, 0);
+-- 19: Calc II Tutoring
+(19, 'https://images.unsplash.com/photo-1596495578065-6e0763fa1178?auto=format&fit=crop&w=900&q=80', 1, 0),
+-- 20: Concert Tickets
+(20, 'https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?auto=format&fit=crop&w=900&q=80', 1, 0);
 
 --
 -- Price History (triggers price drop badges)

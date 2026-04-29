@@ -26,6 +26,24 @@ class Controller
         require $layoutView;
     }
 
+    /**
+     * Render a view without the main layout wrapper.
+     */
+    protected function viewRaw(string $view, array $data = []): void
+    {
+        extract($data);
+
+        $contentView = __DIR__ . '/../views/' . $view . '.php';
+
+        if (!file_exists($contentView)) {
+            http_response_code(500);
+            echo "<h1>View not found: {$view}</h1>";
+            return;
+        }
+
+        require $contentView;
+    }
+
      protected function redirect(string $path): void
     {
         header("Location: {$path}");

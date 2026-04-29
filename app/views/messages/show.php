@@ -11,10 +11,18 @@ $listingImage = htmlspecialchars($conversation['listing_image'] ?? '', ENT_QUOTE
 $listingPrice = $conversation['listing_price'] ?? null;
 $listingId = (int) ($conversation['listing_id'] ?? 0);
 $convId = (int) ($conversation['conversation_id'] ?? 0);
+
+// Find the highest message ID for polling
+$lastMsgId = 0;
+foreach ($messages as $msg) {
+    $id = (int) ($msg['id'] ?? 0);
+    if ($id > $lastMsgId) {
+        $lastMsgId = $id;
+    }
+}
 ?>
 
 <section class="form-shell conversation-shell">
-    <!-- Conversation header with listing context -->
     <div class="conv-detail-header">
         <a href="/messages" class="conv-back-link">← Back to messages</a>
 
@@ -40,6 +48,7 @@ $convId = (int) ($conversation['conversation_id'] ?? 0);
                 <strong><?= $otherName ?></strong>
                 <span class="seller-status"><?= $otherRole ?></span>
             </div>
+            <span class="live-indicator" id="liveIndicator" title="Live — checking for new messages">●</span>
         </div>
     </div>
 
@@ -51,7 +60,7 @@ $convId = (int) ($conversation['conversation_id'] ?? 0);
             $body = htmlspecialchars($msg['message_body'] ?? '', ENT_QUOTES, 'UTF-8');
             $time = date('M j, g:ia', strtotime($msg['created_at']));
         ?>
-            <div class="message-bubble <?= $isMine ? 'msg-mine' : 'msg-theirs' ?>">
+            <div class="message-bubble <?= $isMine ? 'msg-mine' : 'msg-theirs' ?>" data-msg-id="<?= (int) $msg['id'] ?>">
                 <?php if (!$isMine): ?>
                     <span class="msg-sender"><?= $senderName ?></span>
                 <?php endif; ?>
@@ -61,20 +70,136 @@ $convId = (int) ($conversation['conversation_id'] ?? 0);
         <?php endforeach; ?>
     </div>
 
-    <!-- Reply form -->
-    <form action="/messages/reply" method="POST" class="reply-form">
-        <input type="hidden" name="conversation_id" value="<?= $convId ?>">
+    <!-- Reply form (AJAX) -->
+    <div class="reply-form">
         <div class="reply-input-row">
-            <input type="text" name="message" class="input-control reply-input" placeholder="Type a message…" required autofocus>
-            <button type="submit" class="reply-send-btn">Send</button>
+            <input type="text" id="replyInput" class="input-control reply-input" placeholder="Type a message…" autofocus>
+            <button type="button" id="replySendBtn" class="reply-send-btn">Send</button>
         </div>
-    </form>
+    </div>
 </section>
 
 <script>
-// Auto-scroll to bottom of thread
-const thread = document.getElementById('messageThread');
-if (thread) {
-    thread.scrollTop = thread.scrollHeight;
-}
+(() => {
+    const convId = <?= $convId ?>;
+    const thread = document.getElementById('messageThread');
+    const input = document.getElementById('replyInput');
+    const sendBtn = document.getElementById('replySendBtn');
+    const indicator = document.getElementById('liveIndicator');
+    let lastMsgId = <?= $lastMsgId ?>;
+    let sending = false;
+
+    // Scroll to bottom
+    function scrollToBottom() {
+        thread.scrollTop = thread.scrollHeight;
+    }
+    scrollToBottom();
+
+    // Create a message bubble element
+    function createBubble(msg) {
+        const div = document.createElement('div');
+        div.className = 'message-bubble ' + (msg.is_mine ? 'msg-mine' : 'msg-theirs');
+        div.dataset.msgId = msg.id;
+
+        let html = '';
+        if (!msg.is_mine) {
+            html += '<span class="msg-sender">' + escapeHtml(msg.sender_name) + '</span>';
+        }
+        html += '<p>' + escapeHtml(msg.body).replace(/\n/g, '<br>') + '</p>';
+        html += '<span class="msg-time">' + escapeHtml(msg.time) + '</span>';
+
+        div.innerHTML = html;
+        return div;
+    }
+
+    function escapeHtml(text) {
+        const d = document.createElement('div');
+        d.textContent = text;
+        return d.innerHTML;
+    }
+
+    // ── Poll for new messages ───────────────────────────
+    async function poll() {
+        try {
+            const res = await fetch('/messages/poll?id=' + convId + '&after=' + lastMsgId);
+            const data = await res.json();
+
+            if (data.messages && data.messages.length > 0) {
+                const wasAtBottom = (thread.scrollHeight - thread.scrollTop - thread.clientHeight) < 60;
+
+                data.messages.forEach(msg => {
+                    // Don't add duplicates
+                    if (!thread.querySelector('[data-msg-id="' + msg.id + '"]')) {
+                        thread.appendChild(createBubble(msg));
+                        lastMsgId = msg.id;
+                    }
+                });
+
+                if (wasAtBottom) {
+                    scrollToBottom();
+                }
+
+                // Flash indicator green briefly
+                indicator.classList.add('live-flash');
+                setTimeout(() => indicator.classList.remove('live-flash'), 600);
+            }
+        } catch (e) {
+            console.error('Poll error:', e);
+        }
+    }
+
+    // Poll every 3 seconds
+    setInterval(poll, 3000);
+
+    // ── Send message via AJAX ───────────────────────────
+    async function sendMessage() {
+        const body = input.value.trim();
+        if (body === '' || sending) return;
+
+        sending = true;
+        sendBtn.disabled = true;
+        sendBtn.textContent = '…';
+
+        try {
+            const res = await fetch('/messages/send', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    conversation_id: convId,
+                    message: body,
+                }),
+            });
+
+            const data = await res.json();
+
+            if (data.success && data.message) {
+                // Add the bubble immediately
+                if (!thread.querySelector('[data-msg-id="' + data.message.id + '"]')) {
+                    thread.appendChild(createBubble(data.message));
+                    lastMsgId = data.message.id;
+                }
+                scrollToBottom();
+                input.value = '';
+            }
+        } catch (e) {
+            console.error('Send error:', e);
+        } finally {
+            sending = false;
+            sendBtn.disabled = false;
+            sendBtn.textContent = 'Send';
+            input.focus();
+        }
+    }
+
+    // Send on button click
+    sendBtn.addEventListener('click', sendMessage);
+
+    // Send on Enter key
+    input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            sendMessage();
+        }
+    });
+})();
 </script>
