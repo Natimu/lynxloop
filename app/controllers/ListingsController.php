@@ -156,7 +156,7 @@ class ListingsController extends Controller
                 'quantity' => $quantity,
                 'brand' => $brand !== '' ? $brand : null,
                 'location' => $location !== '' ? $location : null,
-                'status' => 'pending',
+                'status' => 'active',
                 'pickup_only' => $pickupOnly,
             ], $storedImagePaths);
         } catch (Throwable $exception) {
