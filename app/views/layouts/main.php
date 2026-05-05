@@ -42,9 +42,13 @@ if (isset($_SESSION['flash_error'])) {
                        value="<?= htmlspecialchars($_GET['q'] ?? '', ENT_QUOTES, 'UTF-8') ?>">
             </form>
             <div class="header-actions">
-                <form action="/logout" method="POST">
-                    <button class="logout-button" type="submit">Logout</button>
-                </form>
+                <a href="/messages" class="message-nav-link" aria-label="Open messages">
+                    <span class="message-nav-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" role="presentation" focusable="false">
+                            <path d="M4 6.5h16a1.5 1.5 0 0 1 1.5 1.5v8A1.5 1.5 0 0 1 20 17.5H4A1.5 1.5 0 0 1 2.5 16V8A1.5 1.5 0 0 1 4 6.5Zm0 1a.5.5 0 0 0-.5.5v.2l8.2 5.47a.5.5 0 0 0 .56 0l8.24-5.49V8a.5.5 0 0 0-.5-.5H4Zm16.5 1.9-7.68 5.12a1.5 1.5 0 0 1-1.66 0L3.5 9.42V16a.5.5 0 0 0 .5.5h16a.5.5 0 0 0 .5-.5V9.4Z" fill="currentColor"/>
+                        </svg>
+                    </span>
+                </a>
                 <button class="account-chip" type="button" data-account-toggle aria-controls="accountPanel" aria-expanded="false">
                     <span><?= $initial ?></span>
                 </button>
@@ -83,6 +87,9 @@ if (isset($_SESSION['flash_error'])) {
                     <div class="account-panel-cta">
                         <a href="/listings/create">Publish a listing</a>
                     </div>
+                    <form action="/logout" method="POST" class="account-logout-form">
+                        <button class="account-logout-button" type="submit">Logout</button>
+                    </form>
                 </div>
             </div>
             <div class="panel-overlay" data-account-close></div>

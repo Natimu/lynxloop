@@ -783,8 +783,8 @@ INSERT INTO listings (id, user_id, category_id, title, description, item_conditi
 (7,  7, 2, 'Quadcopter Starter Kit',                    '3D printed frame, spare props, flight controller presets, and a carrying case. Flies great.', 'good',    85.00, 0, 1, 'Custom Build', 'Engineering Lab',    'active', 1, NULL),
 (8,  1, 2, 'USB-C Portable Monitor 15.6"',              'Matte panel with magnetic case stand and calibration sheet. Used for one semester.', 'like_new', 95.00, 0, 1, 'ASUS',        'CS Building Lobby',  'active', 1, NULL),
 (9,  3, 2, 'Mechanical Keyboard (Cherry MX Brown)',      'Full-size layout with PBT keycaps and detachable cable. Great typing feel, too loud for my roommate.', 'good', 55.00, 1, 1, 'Keychron',    'Dorm Hall C',        'active', 1, NULL),
-(10, 5, 2, 'Noise-Canceling Headphones',                'Over-ear, 30hr battery, comes with hard case and airplane adapter. Small scratch on left cup.', 'fair', 70.00, 0, 1, 'Sony',        'Student Union',      'active', 1, DATE_SUB(NOW(), INTERVAL 12 HOUR)),
-(11, 4, 3, 'Reclaimed Canvas Jacket',                   'Indigo-dyed jacket with reinforced seams and hidden phone pocket. Size M.', 'like_new', 80.00, 1, 1, NULL,          'Fashion Lab',        'active', 1, NULL),
+
+
 (12, 4, 3, 'Hand Loomed Scarf Set',                     'Pair of plant-dyed scarves with gradient weaves. One warm-toned, one cool.', 'new', 35.00, 1, 2, NULL,          'Fashion Lab',        'active', 0, NULL),
 (13, 4, 3, 'Vintage Denim Overalls',                    'Authentic 90s find, perfectly broken in. Fits like a modern size S/M.', 'fair', 45.00, 1, 1, 'Levi\'s',     'Fashion Lab',        'active', 1, NULL),
 (14, 5, 4, 'Zero-Gravity Desk Chair',                   'Breathable mesh with adjustable lumbar kit and rolling mat included. Disassembles for transport.', 'good', 150.00, 0, 1, 'Autonomous',  'Off-campus (rides available)', 'active', 1, NULL),
@@ -805,48 +805,48 @@ INSERT INTO listings (id, user_id, category_id, title, description, item_conditi
 
 INSERT INTO listing_images (listing_id, image_path, is_primary, sort_order) VALUES
 -- 1: Organic Chemistry Textbooks
-(1,  'https://images.unsplash.com/photo-1532012197267-da84d127e765?auto=format&fit=crop&w=900&q=80', 1, 0),
-(1,  'https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&w=900&q=80', 0, 1),
+(1,  'https://live.staticflickr.com/8451/8014806278_c9b3aa4b65_b.jpg', 1, 0),
+(1,  'https://live.staticflickr.com/127/322452024_e5f2e6b17e_b.jpg', 0, 1),
 -- 2: Data Structures CS Workbook
-(2,  'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=900&q=80', 1, 0),
+(2,  'https://live.staticflickr.com/127/322452024_e5f2e6b17e_b.jpg', 1, 0),
 -- 3: Microeconomics Notes
-(3,  'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&w=900&q=80', 1, 0),
+(3,  'https://live.staticflickr.com/2717/4351188150_3bf7ab8b3b_b.jpg', 1, 0),
 -- 4: Sketch Pads
-(4,  'https://images.unsplash.com/photo-1513364776144-60967b0f800f?auto=format&fit=crop&w=900&q=80', 1, 0),
+(4,  'https://live.staticflickr.com/3367/3429109885_863f3d4323.jpg', 1, 0),
 -- 5: Psychology Textbook
-(5,  'https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&w=900&q=80', 1, 0),
+(5,  'https://upload.wikimedia.org/wikipedia/commons/0/01/PSYCHOLOGY_BOOK.jpg', 1, 0),
 -- 6: Desk Speakers
-(6,  'https://images.unsplash.com/photo-1545454675-3531b543be5d?auto=format&fit=crop&w=900&q=80', 1, 0),
-(6,  'https://images.unsplash.com/photo-1558618666-fcd25c85f82e?auto=format&fit=crop&w=900&q=80', 0, 1),
-(6,  'https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?auto=format&fit=crop&w=900&q=80', 0, 2),
+(6,  'https://live.staticflickr.com/2769/4130510266_21112d6348_b.jpg', 1, 0),
+(6,  'https://live.staticflickr.com/5004/5260583430_b7431b3f5c_b.jpg', 0, 1),
+(6,  'https://live.staticflickr.com/5168/5207711052_371814622f_b.jpg', 0, 2),
 -- 7: Quadcopter Drone Kit
-(7,  'https://images.unsplash.com/photo-1507582020474-9a35b7d455d9?auto=format&fit=crop&w=900&q=80', 1, 0),
+(7,  'https://upload.wikimedia.org/wikipedia/commons/a/af/Dji_Spark_%28216743517%29.jpeg', 1, 0),
 -- 8: Portable Monitor
-(8,  'https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?auto=format&fit=crop&w=900&q=80', 1, 0),
+(8,  'https://live.staticflickr.com/3280/3830388876_e6086e7201_b.jpg', 1, 0),
 -- 9: Mechanical Keyboard
-(9,  'https://images.unsplash.com/photo-1618384887929-16ec33fab9ef?auto=format&fit=crop&w=900&q=80', 1, 0),
+(9,  'https://live.staticflickr.com/8238/8456245466_49fd7fb092_b.jpg', 1, 0),
 -- 10: Noise-Canceling Headphones
-(10, 'https://images.unsplash.com/photo-1583394838336-acd977736f90?auto=format&fit=crop&w=900&q=80', 1, 0),
+(10, 'https://live.staticflickr.com/65535/52436478301_811f7eaf2d_b.jpg', 1, 0),
 -- 11: Canvas Jacket
-(11, 'https://images.unsplash.com/photo-1551028719-00167b16eac5?auto=format&fit=crop&w=900&q=80', 1, 0),
+(11, 'https://live.staticflickr.com/7385/11983496123_fba493693f_b.jpg', 1, 0),
 -- 12: Scarf Set
-(12, 'https://images.unsplash.com/photo-1520903920243-00d872a2d1c9?auto=format&fit=crop&w=900&q=80', 1, 0),
+(12, 'https://live.staticflickr.com/5166/5344584978_d9107ece19_b.jpg', 1, 0),
 -- 13: Vintage Denim Overalls
-(13, 'https://images.unsplash.com/photo-1565084888279-aca607ecce0c?auto=format&fit=crop&w=900&q=80', 1, 0),
+(13, 'https://live.staticflickr.com/1682/24171671365_2ef242f6f0_b.jpg', 1, 0),
 -- 14: Desk Chair
-(14, 'https://images.unsplash.com/photo-1580480055273-228ff5388ef8?auto=format&fit=crop&w=900&q=80', 1, 0),
+(14, 'https://live.staticflickr.com/3506/3467601427_d884c978b2_b.jpg', 1, 0),
 -- 15: Hydroponic Grow Bar
-(15, 'https://images.unsplash.com/photo-1466692476868-aef1dfb1e735?auto=format&fit=crop&w=900&q=80', 1, 0),
+(15, 'https://live.staticflickr.com/5042/5373005725_e0d0e26b69.jpg', 1, 0),
 -- 16: IKEA Kallax Shelf
-(16, 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=900&q=80', 1, 0),
+(16, 'https://upload.wikimedia.org/wikipedia/commons/7/76/Kallax_Hack.png', 1, 0),
 -- 17: Oil Paint Set
-(17, 'https://images.unsplash.com/photo-1460661419201-fd4cecdf8a8b?auto=format&fit=crop&w=900&q=80', 1, 0),
+(17, 'https://live.staticflickr.com/5618/30469930572_fb4dfd1227_b.jpg', 1, 0),
 -- 18: Tabletop Easel
-(18, 'https://images.unsplash.com/photo-1513364776144-60967b0f800f?auto=format&fit=crop&w=900&q=80', 1, 0),
+(18, 'https://live.staticflickr.com/7374/16434849861_1b84bd30cd_b.jpg', 1, 0),
 -- 19: Calc II Tutoring
-(19, 'https://images.unsplash.com/photo-1596495578065-6e0763fa1178?auto=format&fit=crop&w=900&q=80', 1, 0),
+(19, 'https://upload.wikimedia.org/wikipedia/commons/c/cc/Maths_Tutor.jpg', 1, 0),
 -- 20: Concert Tickets
-(20, 'https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?auto=format&fit=crop&w=900&q=80', 1, 0);
+(20, 'https://live.staticflickr.com/3046/2683609607_1330b4beff_b.jpg', 1, 0);
 
 --
 -- Price History (triggers price drop badges)
@@ -859,33 +859,6 @@ INSERT INTO price_history (listing_id, old_price, new_price, changed_at) VALUES
 (14, 200.00, 150.00, DATE_SUB(NOW(), INTERVAL 2 DAY)),
 (9,  65.00,  55.00, DATE_SUB(NOW(), INTERVAL 12 HOUR));
 
---
--- Conversations & Messages
---
-
-INSERT INTO conversations (id, listing_id, created_by, created_at) VALUES
-(1, 1, 1, DATE_SUB(NOW(), INTERVAL 2 DAY)),
-(2, 6, 1, DATE_SUB(NOW(), INTERVAL 1 DAY)),
-(3, 11, 5, DATE_SUB(NOW(), INTERVAL 3 DAY)),
-(4, 20, 6, DATE_SUB(NOW(), INTERVAL 6 HOUR));
-
-INSERT INTO conversation_participants (conversation_id, user_id) VALUES
-(1, 1), (1, 2),
-(2, 1), (2, 3),
-(3, 5), (3, 4),
-(4, 6), (4, 7);
-
-INSERT INTO messages (conversation_id, sender_id, message_body, is_read, created_at) VALUES
-(1, 1, 'Hey, is this still available?', 1, DATE_SUB(NOW(), INTERVAL 2 DAY)),
-(1, 2, 'Yes! It is. Are you free to pick up tomorrow?', 1, DATE_SUB(NOW(), INTERVAL 47 HOUR)),
-(1, 1, 'Works for me. Library West lobby at 3pm?', 1, DATE_SUB(NOW(), INTERVAL 46 HOUR)),
-(1, 2, 'Perfect, see you then!', 1, DATE_SUB(NOW(), INTERVAL 45 HOUR)),
-(2, 1, 'Hey, is this still available?', 1, DATE_SUB(NOW(), INTERVAL 1 DAY)),
-(2, 3, 'Still got them! Want to come hear them first?', 0, DATE_SUB(NOW(), INTERVAL 23 HOUR)),
-(3, 5, 'Love the jacket! Would you trade for a pair of vintage boots?', 1, DATE_SUB(NOW(), INTERVAL 3 DAY)),
-(3, 4, 'What size are the boots? Send me a pic if you can.', 1, DATE_SUB(NOW(), INTERVAL 71 HOUR)),
-(3, 5, 'Size 8, barely worn. I will bring them by the fashion lab.', 0, DATE_SUB(NOW(), INTERVAL 70 HOUR)),
-(4, 6, 'Hey, is this still available?', 0, DATE_SUB(NOW(), INTERVAL 6 HOUR));
 
 --
 -- Notifications

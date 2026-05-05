@@ -71,6 +71,39 @@ a {
     gap: 0.75rem;
 }
 
+.message-nav-link {
+    width: 44px;
+    height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    border: 1px solid var(--stroke);
+    background: rgba(255, 255, 255, 0.03);
+    text-decoration: none;
+    transition: transform 180ms ease, border-color 180ms ease, color 180ms ease, background 180ms ease;
+}
+
+.message-nav-link:hover {
+    transform: translateY(-2px);
+    border-color: var(--gold);
+    color: var(--gold);
+    background: rgba(243, 200, 70, 0.08);
+}
+
+.message-nav-icon {
+    width: 20px;
+    height: 20px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.message-nav-icon svg {
+    width: 20px;
+    height: 20px;
+}
+
 .guest-nav a {
     text-decoration: none;
     padding: 0.4rem 0.85rem;
@@ -97,6 +130,13 @@ a {
     justify-content: center;
     text-decoration: none;
     box-shadow: 0 10px 25px rgba(243, 200, 70, 0.35);
+    cursor: pointer;
+    transition: transform 180ms ease, box-shadow 180ms ease;
+}
+
+.account-chip:hover {
+    transform: translateY(-2px) scale(1.03);
+    box-shadow: 0 14px 28px rgba(243, 200, 70, 0.45);
 }
 
 .account-panel-wrap {
@@ -171,6 +211,29 @@ a {
     color: var(--onyx);
     font-weight: 600;
     text-decoration: none;
+}
+
+.account-logout-form {
+    margin-top: 1rem;
+}
+
+.account-logout-button {
+    width: 100%;
+    padding: 0.85rem 1rem;
+    border-radius: 16px;
+    border: 1px solid rgba(248, 113, 113, 0.28);
+    background: rgba(248, 113, 113, 0.08);
+    color: #fecaca;
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+    transition: border-color 180ms ease, background 180ms ease, transform 180ms ease;
+}
+
+.account-logout-button:hover {
+    transform: translateY(-1px);
+    border-color: rgba(248, 113, 113, 0.5);
+    background: rgba(248, 113, 113, 0.14);
 }
 
 .panel-overlay {
@@ -461,6 +524,327 @@ footer {
     gap: 1.5rem;
 }
 
+.manage-listings-stack {
+    display: grid;
+    gap: 1rem;
+}
+
+.listing-section#my-listings {
+    background:
+        radial-gradient(circle at top right, rgba(243, 200, 70, 0.1), transparent 30%),
+        linear-gradient(180deg, rgba(17, 17, 17, 0.96), rgba(10, 10, 10, 0.92));
+}
+
+.manage-listing-card {
+    display: grid;
+    padding: 1rem;
+    border-radius: 22px;
+    border: 1px solid var(--stroke);
+    background: linear-gradient(160deg, rgba(255, 255, 255, 0.03), rgba(243, 200, 70, 0.04));
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.28);
+    position: relative;
+    overflow: hidden;
+    transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
+}
+
+.manage-listing-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(120deg, rgba(243, 200, 70, 0.08), transparent 42%);
+    opacity: 0;
+    transition: opacity 180ms ease;
+}
+
+.manage-listing-card:hover {
+    transform: translateY(-3px);
+    border-color: rgba(243, 200, 70, 0.28);
+    box-shadow: 0 24px 48px rgba(0, 0, 0, 0.34);
+}
+
+.manage-listing-card:hover::after {
+    opacity: 1;
+}
+
+.manage-listing-card-open {
+    border-color: rgba(243, 200, 70, 0.32);
+    box-shadow: 0 26px 50px rgba(0, 0, 0, 0.38);
+}
+
+.manage-listing-toggle {
+    display: grid;
+    grid-template-columns: 120px minmax(0, 1fr);
+    gap: 1rem;
+    align-items: center;
+    width: 100%;
+    padding: 0;
+    background: transparent;
+    border: 0;
+    color: inherit;
+    text-align: left;
+    cursor: pointer;
+}
+
+.manage-listing-media img {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 18px;
+    border: 1px solid var(--stroke);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.28);
+}
+
+.manage-listing-summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.manage-listing-summary-main h3,
+.manage-listing-summary-main p {
+    margin: 0;
+}
+
+.manage-listing-summary-main h3 {
+    font-size: 1.1rem;
+}
+
+.manage-listing-summary-main p {
+    margin-top: 0.4rem;
+    color: var(--porcelain-muted);
+}
+
+.manage-listing-summary-side {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    flex-shrink: 0;
+}
+
+.manage-price-pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.55rem 0.9rem;
+    border-radius: 999px;
+    background: rgba(243, 200, 70, 0.12);
+    border: 1px solid rgba(243, 200, 70, 0.18);
+    color: var(--gold);
+    font-weight: 700;
+}
+
+.manage-expand-indicator {
+    width: 38px;
+    height: 38px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    border: 1px solid var(--stroke);
+    background: rgba(255, 255, 255, 0.04);
+    color: var(--porcelain);
+    font-size: 1.4rem;
+    line-height: 1;
+    transition: transform 180ms ease, border-color 180ms ease, color 180ms ease;
+}
+
+.manage-listing-card-open .manage-expand-indicator,
+.manage-listing-toggle[aria-expanded='true'] .manage-expand-indicator {
+    transform: rotate(45deg);
+    border-color: var(--gold);
+    color: var(--gold);
+}
+
+.manage-listing-content {
+    display: grid;
+    gap: 1rem;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.manage-listing-content-collapsed {
+    display: none;
+}
+
+.manage-listing-head {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    align-items: start;
+}
+
+.manage-listing-head h3,
+.manage-listing-head p {
+    margin: 0;
+}
+
+.manage-listing-head p {
+    margin-top: 0.35rem;
+    color: var(--porcelain-muted);
+}
+
+.manage-listing-head strong {
+    color: var(--gold);
+    font-weight: 700;
+}
+
+.manage-view-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 84px;
+    padding: 0.7rem 1rem;
+    border-radius: 999px;
+    border: 1px solid var(--stroke);
+    color: var(--porcelain);
+    text-decoration: none;
+    background: rgba(255, 255, 255, 0.03);
+    transition: border-color 180ms ease, color 180ms ease, background 180ms ease;
+}
+
+.manage-view-link:hover {
+    border-color: var(--gold);
+    color: var(--gold);
+    background: rgba(243, 200, 70, 0.08);
+}
+
+.manage-listing-form {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(180px, 1fr) auto;
+    gap: 0.85rem;
+    align-items: end;
+    padding: 1rem;
+    border-radius: 20px;
+    background: rgba(0, 0, 0, 0.18);
+    border: 1px solid rgba(243, 200, 70, 0.08);
+}
+
+.manage-field {
+    display: grid;
+    gap: 0.4rem;
+    padding: 0.8rem 0.9rem 0.9rem;
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.025);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.manage-field span {
+    font-size: 0.85rem;
+    color: var(--porcelain-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+.manage-field input {
+    width: 100%;
+    min-height: 48px;
+    border-radius: 14px;
+    border: 1px solid var(--stroke);
+    background: rgba(12, 12, 12, 0.9);
+    color: var(--porcelain);
+    padding: 0.85rem 1rem;
+    font: inherit;
+    font-weight: 500;
+}
+
+.manage-field textarea {
+    width: 100%;
+    min-height: 120px;
+    resize: vertical;
+    border-radius: 14px;
+    border: 1px solid var(--stroke);
+    background: rgba(12, 12, 12, 0.9);
+    color: var(--porcelain);
+    padding: 0.85rem 1rem;
+    font: inherit;
+    font-weight: 500;
+    line-height: 1.5;
+}
+
+.manage-field input:focus {
+    outline: none;
+    border-color: var(--gold);
+    box-shadow: 0 0 0 3px rgba(243, 200, 70, 0.14);
+}
+
+.manage-field textarea:focus {
+    outline: none;
+    border-color: var(--gold);
+    box-shadow: 0 0 0 3px rgba(243, 200, 70, 0.14);
+}
+
+.manage-field input::placeholder {
+    color: rgba(248, 248, 243, 0.42);
+}
+
+.manage-field textarea::placeholder {
+    color: rgba(248, 248, 243, 0.42);
+}
+
+.manage-field:first-child input {
+    font-size: 1rem;
+}
+
+.manage-field:last-of-type input {
+    letter-spacing: 0.02em;
+}
+
+.manage-field-wide {
+    grid-column: 1 / -1;
+}
+
+.manage-actions {
+    display: flex;
+    align-items: stretch;
+    grid-column: 1 / -1;
+    justify-content: flex-end;
+}
+
+.manage-actions .solid {
+    min-height: 48px;
+    border: 0;
+    border-radius: 999px;
+    padding: 0.85rem 1.2rem;
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+    background: linear-gradient(120deg, var(--gold), var(--gold-deep));
+    color: var(--onyx);
+    box-shadow: 0 15px 30px rgba(243, 200, 70, 0.25);
+    transition: transform 180ms ease, box-shadow 180ms ease;
+}
+
+.manage-actions .solid:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 18px 34px rgba(243, 200, 70, 0.32);
+}
+
+.manage-delete-form {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.manage-delete-button {
+    border: 1px solid rgba(255, 122, 122, 0.45);
+    background: rgba(255, 122, 122, 0.08);
+    color: #ffb3b3;
+    border-radius: 999px;
+    padding: 0.7rem 1rem;
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+    transition: border-color 180ms ease, background 180ms ease, transform 180ms ease;
+}
+
+.manage-delete-button:hover {
+    border-color: rgba(255, 122, 122, 0.8);
+    background: rgba(255, 122, 122, 0.14);
+    transform: translateY(-1px);
+}
+
 .listing-card {
     background: linear-gradient(160deg, rgba(17, 17, 17, 0.95), rgba(5, 5, 5, 0.85));
     border: 1px solid var(--stroke);
@@ -589,6 +973,38 @@ footer {
 
     .listing-section {
         padding: 1rem;
+    }
+
+    .manage-listing-card {
+        padding: 0.85rem;
+    }
+
+    .manage-listing-toggle {
+        grid-template-columns: 1fr;
+    }
+
+    .manage-listing-media img {
+        width: 100%;
+        height: 220px;
+    }
+
+    .manage-listing-summary {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .manage-listing-summary-side {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .manage-listing-head {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .manage-listing-form {
+        grid-template-columns: 1fr;
     }
 
     .card-actions {

@@ -180,6 +180,116 @@ class ListingsController extends Controller
         $this->redirect('/dashboard');
     }
 
+    public function update(): void
+    {
+        Auth::requireLogin();
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $this->redirect('/dashboard#my-listings');
+        }
+
+        $listingId = (int) ($_POST['listing_id'] ?? 0);
+        $title = trim($_POST['title'] ?? '');
+        $priceRaw = trim($_POST['price'] ?? '');
+        $description = trim($_POST['description'] ?? '');
+        $locationRaw = trim($_POST['location'] ?? '');
+        $userId = (int) $_SESSION['user_id'];
+
+        if ($listingId <= 0) {
+            $_SESSION['flash_error'] = 'Invalid listing selected.';
+            $this->redirect('/dashboard#my-listings');
+        }
+
+        if ($title === '') {
+            $_SESSION['flash_error'] = 'Listing name is required.';
+            $this->redirect('/dashboard#my-listings');
+        }
+
+        if (mb_strlen($title) > 200) {
+            $_SESSION['flash_error'] = 'Listing name must stay under 200 characters.';
+            $this->redirect('/dashboard#my-listings');
+        }
+
+        if ($description === '') {
+            $_SESSION['flash_error'] = 'Description is required.';
+            $this->redirect('/dashboard#my-listings');
+        }
+
+        if (mb_strlen($description) > 5000) {
+            $_SESSION['flash_error'] = 'Description is too long.';
+            $this->redirect('/dashboard#my-listings');
+        }
+
+        if ($locationRaw !== '' && mb_strlen($locationRaw) > 150) {
+            $_SESSION['flash_error'] = 'Meetup location must stay under 150 characters.';
+            $this->redirect('/dashboard#my-listings');
+        }
+
+        $price = null;
+        if ($priceRaw !== '') {
+            if (!is_numeric($priceRaw) || (float) $priceRaw < 0) {
+                $_SESSION['flash_error'] = 'Price must be a valid number or left blank for trade only.';
+                $this->redirect('/dashboard#my-listings');
+            }
+
+            $price = number_format((float) $priceRaw, 2, '.', '');
+        }
+
+        $location = $locationRaw !== '' ? $locationRaw : null;
+
+        try {
+            $updated = $this->listingModel->updateOwnedListing(
+                $listingId,
+                $userId,
+                $title,
+                $price,
+                $description,
+                $location
+            );
+        } catch (Throwable $exception) {
+            error_log('Listing update failed: ' . $exception->getMessage());
+            $_SESSION['flash_error'] = 'Could not save your listing changes.';
+            $this->redirect('/dashboard#my-listings');
+        }
+
+        if (!$updated) {
+            $_SESSION['flash_error'] = 'Listing not found or you do not have permission to edit it.';
+            $this->redirect('/dashboard#my-listings');
+        }
+
+        $_SESSION['flash_success'] = 'Listing updated successfully.';
+        $this->redirect('/dashboard#my-listings');
+    }
+
+    public function delete(): void
+    {
+        Auth::requireLogin();
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $this->redirect('/dashboard#my-listings');
+        }
+
+        $listingId = (int) ($_POST['listing_id'] ?? 0);
+        $userId = (int) $_SESSION['user_id'];
+
+        if ($listingId <= 0) {
+            $_SESSION['flash_error'] = 'Invalid listing selected.';
+            $this->redirect('/dashboard#my-listings');
+        }
+
+        try {
+            $imagePaths = $this->listingModel->deleteOwnedListing($listingId, $userId);
+            $this->deleteStoredImages($imagePaths);
+        } catch (Throwable $exception) {
+            error_log('Listing delete failed: ' . $exception->getMessage());
+            $_SESSION['flash_error'] = 'Could not delete that listing.';
+            $this->redirect('/dashboard#my-listings');
+        }
+
+        $_SESSION['flash_success'] = 'Listing deleted successfully.';
+        $this->redirect('/dashboard#my-listings');
+    }
+
     private function categoryOptions(): array
     {
         return [

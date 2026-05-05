@@ -7,7 +7,6 @@ $conversations = $conversations ?? [];
     <header>
         <p class="hero-eyebrow">Messages</p>
         <h1>Your conversations</h1>
-        <p>Messages about your listings and items you're interested in.</p>
     </header>
 
     <?php if (!empty($conversations)): ?>

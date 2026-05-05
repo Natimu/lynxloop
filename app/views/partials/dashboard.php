@@ -13,15 +13,8 @@ $firstNameSafe = htmlspecialchars($firstName, ENT_QUOTES, 'UTF-8');
         <div class="hero-content">
             <p class="hero-eyebrow">Marketplace pulse</p>
             <h1 class="hero-title">Hey <?= $firstNameSafe ?>, keep trading momentum alive.</h1>
-            <p class="hero-grid-meta">
-                Discover your needs in your school. Textbooks, Electronics, Apparel, and many more.
-            </p>
         </div>
         <div class="hero-stats">
-            <div class="hero-stat">
-                <strong><?= $totalListings ?></strong>
-                <span>Active listings</span>
-            </div>
             <div class="hero-stat">
                 <strong><?= $unreadCount ?></strong>
                 <span>Unread messages</span>
@@ -70,7 +63,84 @@ $firstNameSafe = htmlspecialchars($firstName, ENT_QUOTES, 'UTF-8');
                 <?php endif; ?>
             </div>
 
-            <?php if (!empty($listings)): ?>
+            <?php if (($section['slug'] ?? '') === 'my-listings' && !empty($listings)): ?>
+                <div class="manage-listings-stack">
+                    <?php foreach ($listings as $listing): ?>
+                        <?php
+                        $listingId = (int) ($listing['id'] ?? 0);
+                        $titleValue = htmlspecialchars((string) ($listing['title'] ?? ''), ENT_QUOTES, 'UTF-8');
+                        $priceValue = $listing['price'] !== null ? htmlspecialchars((string) $listing['price'], ENT_QUOTES, 'UTF-8') : '';
+                        $priceLabel = $listing['price'] !== null
+                            ? '$' . number_format((float) $listing['price'], 2)
+                            : 'Trade only';
+                        $descriptionValue = htmlspecialchars((string) ($listing['description'] ?? ''), ENT_QUOTES, 'UTF-8');
+                        $locationValue = htmlspecialchars((string) ($listing['location'] ?? ''), ENT_QUOTES, 'UTF-8');
+                        $statusValue = htmlspecialchars(ucfirst((string) ($listing['status'] ?? 'draft')), ENT_QUOTES, 'UTF-8');
+                        $imagePath = htmlspecialchars(
+                            $listing['primary_image'] ?? 'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=900&q=80',
+                            ENT_QUOTES,
+                            'UTF-8'
+                        );
+                        $updatedAt = !empty($listing['updated_at']) ? date('M j, Y', strtotime((string) $listing['updated_at'])) : null;
+                        ?>
+                        <article class="manage-listing-card" data-manage-card>
+                            <button type="button" class="manage-listing-toggle" data-manage-toggle aria-expanded="false" aria-controls="manage-panel-<?= $listingId ?>">
+                                <div class="manage-listing-media">
+                                    <img src="<?= $imagePath ?>" alt="<?= $titleValue ?> image" loading="lazy" width="120" height="120">
+                                </div>
+                                <div class="manage-listing-summary">
+                                    <div class="manage-listing-summary-main">
+                                        <h3><?= $titleValue ?></h3>
+                                        <p>Status: <strong><?= $statusValue ?></strong><?php if ($updatedAt): ?> · Updated <?= htmlspecialchars($updatedAt, ENT_QUOTES, 'UTF-8') ?><?php endif; ?></p>
+                                    </div>
+                                    <div class="manage-listing-summary-side">
+                                        <span class="manage-price-pill"><?= htmlspecialchars($priceLabel, ENT_QUOTES, 'UTF-8') ?></span>
+                                        <span class="manage-expand-indicator" aria-hidden="true">+</span>
+                                    </div>
+                                </div>
+                            </button>
+
+                            <div class="manage-listing-content manage-listing-content-collapsed" id="manage-panel-<?= $listingId ?>">
+                                <div class="manage-listing-head">
+                                    <div>
+                                        <h3>Edit listing</h3>
+                                        <p>Update the name, price, description, or meetup location for this post.</p>
+                                    </div>
+                                    <a href="/listings/show?id=<?= $listingId ?>" class="ghost manage-view-link">View</a>
+                                </div>
+
+                                <form action="/listings/update" method="POST" class="manage-listing-form">
+                                    <input type="hidden" name="listing_id" value="<?= $listingId ?>">
+                                    <label class="manage-field">
+                                        <span>Name</span>
+                                        <input type="text" name="title" value="<?= $titleValue ?>" maxlength="200" required>
+                                    </label>
+                                    <label class="manage-field">
+                                        <span>Price</span>
+                                        <input type="text" name="price" value="<?= $priceValue ?>" inputmode="decimal" placeholder="Leave blank for trade only">
+                                    </label>
+                                    <label class="manage-field manage-field-wide">
+                                        <span>Description</span>
+                                        <textarea name="description" rows="4" maxlength="5000" required><?= $descriptionValue ?></textarea>
+                                    </label>
+                                    <label class="manage-field manage-field-wide">
+                                        <span>Meet location</span>
+                                        <input type="text" name="location" value="<?= $locationValue ?>" maxlength="150" placeholder="Library entrance, student center, etc.">
+                                    </label>
+                                    <div class="manage-actions">
+                                        <button type="submit" class="solid">Save changes</button>
+                                    </div>
+                                </form>
+
+                                <form action="/listings/delete" method="POST" class="manage-delete-form" onsubmit="return confirm('Delete this listing permanently?');">
+                                    <input type="hidden" name="listing_id" value="<?= $listingId ?>">
+                                    <button type="submit" class="manage-delete-button">Delete listing</button>
+                                </form>
+                            </div>
+                        </article>
+                    <?php endforeach; ?>
+                </div>
+            <?php elseif (!empty($listings)): ?>
                 <div class="card-grid">
                     <?php foreach ($listings as $listing): ?>
                         <?php require __DIR__ . '/components/listing-card.php'; ?>
@@ -156,5 +226,26 @@ $firstNameSafe = htmlspecialchars($firstName, ENT_QUOTES, 'UTF-8');
             matchingTab.click();
         }
     }
+})();
+
+(() => {
+    const manageCards = document.querySelectorAll('[data-manage-card]');
+
+    manageCards.forEach((card) => {
+        const toggle = card.querySelector('[data-manage-toggle]');
+        const panel = card.querySelector('.manage-listing-content');
+
+        if (!toggle || !panel) {
+            return;
+        }
+
+        toggle.addEventListener('click', () => {
+            const willOpen = toggle.getAttribute('aria-expanded') !== 'true';
+
+            toggle.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
+            panel.classList.toggle('manage-listing-content-collapsed', !willOpen);
+            card.classList.toggle('manage-listing-card-open', willOpen);
+        });
+    });
 })();
 </script>

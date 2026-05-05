@@ -6,6 +6,7 @@ namespace App\Models;
 
 use App\Core\Model;
 use PDO;
+use RuntimeException;
 use Throwable;
 
 class Listing extends Model
@@ -283,6 +284,125 @@ class Listing extends Model
         $stmt->execute();
 
         return $stmt->fetchAll();
+    }
+
+    public function updateOwnedListing(
+        int $listingId,
+        int $userId,
+        string $title,
+        ?string $newPrice,
+        string $description,
+        ?string $location
+    ): bool
+    {
+        $listing = $this->findById($listingId);
+
+        if (!$listing || (int) $listing['user_id'] !== $userId) {
+            return false;
+        }
+
+        $oldPrice = $listing['price'] !== null ? (string) $listing['price'] : null;
+
+        $this->db->beginTransaction();
+
+        try {
+            $sql = "UPDATE {$this->table}
+                    SET title = :title,
+                        price = :price,
+                        description = :description,
+                        location = :location,
+                        updated_at = NOW()
+                    WHERE id = :id AND user_id = :user_id";
+
+            $stmt = $this->db->prepare($sql);
+            $stmt->bindValue(':title', $title, PDO::PARAM_STR);
+            $stmt->bindValue(':price', $newPrice, $newPrice === null ? PDO::PARAM_NULL : PDO::PARAM_STR);
+            $stmt->bindValue(':description', $description, PDO::PARAM_STR);
+            $stmt->bindValue(':location', $location, $location === null ? PDO::PARAM_NULL : PDO::PARAM_STR);
+            $stmt->bindValue(':id', $listingId, PDO::PARAM_INT);
+            $stmt->bindValue(':user_id', $userId, PDO::PARAM_INT);
+            $stmt->execute();
+
+            if (
+                $stmt->rowCount() < 1
+                && $listing['title'] === $title
+                && $oldPrice === $newPrice
+                && (string) ($listing['description'] ?? '') === $description
+                && ($listing['location'] !== null ? (string) $listing['location'] : null) === $location
+            ) {
+                $this->db->commit();
+
+                return true;
+            }
+
+            if ($oldPrice !== $newPrice) {
+                $historySql = "INSERT INTO price_history (listing_id, old_price, new_price, changed_at)
+                               VALUES (:listing_id, :old_price, :new_price, NOW())";
+                $historyStmt = $this->db->prepare($historySql);
+                $historyStmt->bindValue(':listing_id', $listingId, PDO::PARAM_INT);
+                $historyStmt->bindValue(':old_price', $oldPrice, $oldPrice === null ? PDO::PARAM_NULL : PDO::PARAM_STR);
+                $historyStmt->bindValue(':new_price', $newPrice, $newPrice === null ? PDO::PARAM_NULL : PDO::PARAM_STR);
+                $historyStmt->execute();
+            }
+
+            $this->db->commit();
+
+            return true;
+        } catch (Throwable $exception) {
+            if ($this->db->inTransaction()) {
+                $this->db->rollBack();
+            }
+
+            throw $exception;
+        }
+    }
+
+    public function deleteOwnedListing(int $listingId, int $userId): array
+    {
+        $listing = $this->findById($listingId);
+
+        if (!$listing || (int) $listing['user_id'] !== $userId) {
+            throw new RuntimeException('Listing not found for user.');
+        }
+
+        $imagePaths = $this->getListingImagePaths($listingId);
+
+        $this->db->beginTransaction();
+
+        try {
+            $sql = "DELETE FROM {$this->table} WHERE id = :id AND user_id = :user_id";
+            $stmt = $this->db->prepare($sql);
+            $stmt->bindValue(':id', $listingId, PDO::PARAM_INT);
+            $stmt->bindValue(':user_id', $userId, PDO::PARAM_INT);
+            $stmt->execute();
+
+            if ($stmt->rowCount() !== 1) {
+                throw new RuntimeException('Unable to delete listing.');
+            }
+
+            $this->db->commit();
+
+            return $imagePaths;
+        } catch (Throwable $exception) {
+            if ($this->db->inTransaction()) {
+                $this->db->rollBack();
+            }
+
+            throw $exception;
+        }
+    }
+
+    private function getListingImagePaths(int $listingId): array
+    {
+        $sql = "SELECT image_path FROM listing_images WHERE listing_id = :listing_id";
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindValue(':listing_id', $listingId, PDO::PARAM_INT);
+        $stmt->execute();
+
+        return array_values(array_filter(array_map(
+            static fn (array $row): string => (string) ($row['image_path'] ?? ''),
+            $stmt->fetchAll()
+        )));
     }
 
     // ── Update price (with history tracking) ────────────────

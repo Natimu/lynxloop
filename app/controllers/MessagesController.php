@@ -4,10 +4,9 @@ declare(strict_types=1);
 
 use App\Core\Auth;
 use App\Core\Controller;
+use App\Core\Database;
 use App\Models\Message;
 use App\Models\User;
-use PDO;
-use App\Core\Database;
 
 class MessagesController extends Controller
 {

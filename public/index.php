@@ -44,6 +44,8 @@ $router->get('dashboard', 'DashboardController@dashboard');
 
 $router->get('listings/create', 'ListingsController@create');
 $router->post('listings', 'ListingsController@store');
+$router->post('listings/update', 'ListingsController@update');
+$router->post('listings/delete', 'ListingsController@delete');
 
 // Listing detail
 $router->get('listings/show', 'ListingsController@show');
